@@ -33,6 +33,7 @@ static atomic_t _devlist_count = ATOMIC_INIT(0);
 static LIST_HEAD( rpusbdisp_list );
 static DEFINE_MUTEX(_mutex_usbdevlist);
 static DECLARE_WAIT_QUEUE_HEAD(_usblist_waitqueue);
+MODULE_DEVICE_TABLE(usb, id_table);
 
 #if 0
 static struct task_struct * _usb_status_polling_task;  
