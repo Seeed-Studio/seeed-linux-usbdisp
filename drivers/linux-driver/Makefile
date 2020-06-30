@@ -10,12 +10,12 @@
 #    Author Shikai Chen
 #
 ######################################
-
+_PWD := $(shell pwd)
 
 DRIVER_NAME := rp_usbdisplay
 KERNEL_SOURCE_DIR ?= /lib/modules/`uname -r`/build
 
-EXTRA_CFLAGS += -I$(PWD)/src -I$(PWD)/../common
+EXTRA_CFLAGS += -I$(_PWD)/src -I$(_PWD)/../common
 
 obj-m := $(DRIVER_NAME).o
 
@@ -27,12 +27,13 @@ DRIVER_FILES := src/main.o \
 $(DRIVER_NAME)-objs:= $(DRIVER_FILES)
 
 modules:
-	$(MAKE) -C $(KERNEL_SOURCE_DIR) KCPPFLAGS="$(EXTRA_CFLAGS)" M=$(PWD) modules
+	$(MAKE) -C $(KERNEL_SOURCE_DIR) KCPPFLAGS="$(EXTRA_CFLAGS)" M=$(_PWD) modules
 
 modules_install:
-	$(MAKE) -C $(KERNEL_SOURCE_DIR) M=$(PWD) modules_install
+	$(MAKE) -C $(KERNEL_SOURCE_DIR) M=$(_PWD) modules_install
+	@depmod -a
 
 install: modules_install
 
 clean:
-	$(MAKE) -C $(KERNEL_SOURCE_DIR) M=$(PWD) clean
+	$(MAKE) -C $(KERNEL_SOURCE_DIR) M=$(_PWD) clean
