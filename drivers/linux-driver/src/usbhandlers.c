@@ -21,10 +21,15 @@
 
 
 static const struct usb_device_id id_table[] = {
-	{ 
-          .idVendor    = RP_DISP_USB_VENDOR_ID, 
+	{
+          .idVendor    = RP_DISP_USB_VENDOR_ID,
           .idProduct   = RP_DISP_USB_PRODUCT_ID,
-          .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_PRODUCT, 
+          .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_PRODUCT,
+        },
+	{
+          .idVendor    = WIO_DISP_USB_VENDOR_ID,
+          .idProduct   = WIO_DISP_USB_PRODUCT_ID,
+          .match_flags = USB_DEVICE_ID_MATCH_VENDOR | USB_DEVICE_ID_MATCH_PRODUCT,
         },
 	{ },
 };

@@ -19,6 +19,8 @@
 
 #define RP_DISP_USB_VENDOR_ID   0xFCCF // RP Pseudo vendor id
 #define RP_DISP_USB_PRODUCT_ID  0xA001
+#define WIO_DISP_USB_VENDOR_ID  0x2886 // Seeed Studio vendor id
+#define WIO_DISP_USB_PRODUCT_ID 0x802D
 
 #define RP_DISP_DEFAULT_HEIGHT      240
 #define RP_DISP_DEFAULT_WIDTH       320
