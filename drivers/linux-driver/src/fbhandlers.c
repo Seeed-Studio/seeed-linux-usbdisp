@@ -67,9 +67,9 @@ static  struct fb_var_screeninfo _var_info /*__devinitdata*/ = {
     .width = RP_DISP_DEFAULT_WIDTH,
     .height = RP_DISP_DEFAULT_HEIGHT,
     .bits_per_pixel =        RP_DISP_DEFAULT_PIXEL_BITS ,
-    .red = { 0 , 5 , 0 } ,
+    .red = { 11 , 5 , 0 } ,
     .green = { 5 , 6 , 0 } ,
-    .blue = { 11 , 5 , 0 } ,
+    .blue = { 0 , 5 , 0 } ,
     .activate = FB_ACTIVATE_NOW,
     .vmode = FB_VMODE_NONINTERLACED,
 };
