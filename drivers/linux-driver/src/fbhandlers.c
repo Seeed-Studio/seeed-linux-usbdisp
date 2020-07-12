@@ -16,8 +16,6 @@
 #include "inc/fbhandlers.h"
 #include "inc/usbhandlers.h"
 
-static struct fb_info * _default_fb;
-
 struct dirty_rect {
     int  left;
     int  top;
@@ -349,7 +347,7 @@ static struct platform_driver rpusbdisp_fb_driver = {
 };
 #endif
 
-static int _on_create_new_fb(struct fb_info ** out_fb, struct rpusbdisp_dev *dev)
+int _on_create_new_fb(struct fb_info ** out_fb, struct rpusbdisp_dev *dev)
 {
     int ret = -ENOMEM;
     size_t fbmem_size = 0;
@@ -446,7 +444,7 @@ failed:
 
 }
 
-static void _on_release_fb(struct fb_info * fb)
+void _on_release_fb(struct fb_info * fb)
 {
     if (!fb) return;
 
@@ -463,15 +461,15 @@ static void _on_release_fb(struct fb_info * fb)
 }
 
 
-int __init register_fb_handlers(void)
-{
-    return _on_create_new_fb(&_default_fb, NULL);
-}
+// int __init register_fb_handlers(void)
+// {
+//     return _on_create_new_fb(&dev->usb_fb, NULL);
+// }
 
-void unregister_fb_handlers(void)
-{
-    _on_release_fb(_default_fb);
-}
+// void unregister_fb_handlers(void)
+// {
+//     _on_release_fb(dev->usb_fb);
+// }
 
 
 void fbhandler_on_all_transfer_done(struct rpusbdisp_dev * dev)
@@ -499,13 +497,13 @@ int fbhandler_on_new_device(struct rpusbdisp_dev * dev)
     mutex_lock(&_mutex_devreg);
 
     // check whether the default fb has been binded
-    fb_pri = _get_fb_private(_default_fb);
+    fb_pri = _get_fb_private(dev->usb_fb);
     if (!fb_pri->binded_usbdev) {
         mutex_lock(&fb_pri->operation_lock);
 
         // bind to the default framebuffer ( the only one)
         fb_pri->binded_usbdev = dev;
-        rpusbdisp_usb_set_fbhandle(dev, _default_fb);
+        rpusbdisp_usb_set_fbhandle(dev, dev->usb_fb);
 
 
         ans = 0; 
@@ -524,7 +522,7 @@ void fbhandler_on_remove_device(struct rpusbdisp_dev * dev)
     mutex_lock(&_mutex_devreg);
     
     if (fb) {
-        struct rpusbdisp_fb_private * fb_pri = _get_fb_private(_default_fb);
+        struct rpusbdisp_fb_private * fb_pri = _get_fb_private(dev->usb_fb);
 
         mutex_lock(&fb_pri->operation_lock);
 
@@ -536,7 +534,7 @@ void fbhandler_on_remove_device(struct rpusbdisp_dev * dev)
 
 
         // unregister the fb
-        if (fb != _default_fb) {
+        if (fb != dev->usb_fb) {
             _on_release_fb(fb);
         }
     }
@@ -551,7 +549,7 @@ void fbhandler_set_unsync_flag(struct rpusbdisp_dev * dev)
     
     if (!fb) return;
 
-    fb_pri = _get_fb_private(_default_fb);
+    fb_pri = _get_fb_private(dev->usb_fb);
 
     atomic_set(&fb_pri->unsync_flag, 1);
 
