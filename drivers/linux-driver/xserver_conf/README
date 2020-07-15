@@ -1,1 +1,7 @@
-copy the file to /usr/share/X11/xorg.conf.d on Ubuntu system
+There are four xorg.conf files in this folder:
+	10-disp.config:   One-screen display
+	10-disp-1.config: Four-screen expansion display
+	10-disp-2.config: Four-screen expansion display
+	10-disp-3.config: Four-screen expansion display
+
+Please copy one of the files according to your own needs to /usr/share/X11/xorg.conf.d
