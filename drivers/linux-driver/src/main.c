@@ -68,11 +68,11 @@ static int __init usb_disp_init(void)
             break;
         }        
 
-        result = register_fb_handlers();
-        if (result) {
-            err("fb handler register failed. Error number %d", result);
-            break;
-        }
+        // result = register_fb_handlers();
+        // if (result) {
+        //     err("fb handler register failed. Error number %d", result);
+        //     break;
+        // }
 
         result = register_usb_handlers();
 	    if (result) {
@@ -91,7 +91,7 @@ static int __init usb_disp_init(void)
 static void __exit usb_disp_exit(void)
 {
     unregister_usb_handlers();
-    unregister_fb_handlers();
+    // unregister_fb_handlers();
     unregister_touch_handler();
 }
 
