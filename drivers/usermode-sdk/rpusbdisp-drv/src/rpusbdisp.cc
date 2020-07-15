@@ -17,6 +17,9 @@
 #define RP_USB_DISPLAY_VID    0xFCCFu
 #define RP_USB_DISPLAY_PID    0xA001u
 
+#define WIO_DISP_USB_VENDOR_ID  0x2886 // Seeed Studio vendor id
+#define WIO_DISP_USB_PRODUCT_ID 0x802D
+
 #define RP_USB_DISPLAY_STATUS_ENDPOINT  0x82u
 #define RP_USB_DISPLAY_DISPLAY_ENDPOINT  0x01u
 
@@ -33,8 +36,8 @@ using namespace rp::deps::libusbx_wrap;
 
 namespace rp { namespace drivers { namespace display {
     
-    const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = RP_USB_DISPLAY_VID;
-    const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceProductId = RP_USB_DISPLAY_PID;
+    const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = WIO_DISP_USB_VENDOR_ID;
+    const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceProductId = WIO_DISP_USB_PRODUCT_ID;
     
     const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint = RP_USB_DISPLAY_STATUS_ENDPOINT;
     const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint = RP_USB_DISPLAY_DISPLAY_ENDPOINT;
