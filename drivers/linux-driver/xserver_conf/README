@@ -3,5 +3,6 @@ There are four xorg.conf files in this folder:
 	10-disp-1.config: Four-screen expansion display
 	10-disp-2.config: Four-screen expansion display
 	10-disp-3.config: Four-screen expansion display
+	10-disp-4.config: Four-screen clone display
 
 Please copy one of the files according to your own needs to /usr/share/X11/xorg.conf.d
