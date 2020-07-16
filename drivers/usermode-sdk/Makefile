@@ -49,7 +49,7 @@ $(LIBRPUSBDISP_DRV_OBJ): $(LIBRPUSBDISP_DRV_SOURCE)
 	$(CXX) -c -o $@ $(CPPFLAGS) -Iinfra/include -Ideps-wraps/libusbx_wrap/include -Irpusbdisp-drv/include $(patsubst %.o,%.cc,$@)
 
 build/rpusbdispdemo: ${RPUSBDISPDEMO_OBJ} build/libinfra.a build/libdeps_wraps.a build/librpusbdisp-drv.a
-	$(CXX) -o $@ ${RPUSBDISPDEMO_OBJ} $(CPPFLAGS) -Lbuild -L/usr/local/lib -L/usr/lib -lrpusbdisp-drv -ldeps_wraps -linfra -lusb-1.0
+	$(CXX) -o $@ ${RPUSBDISPDEMO_OBJ} $(CPPFLAGS) -Lbuild -L/usr/local/lib -L/usr/lib -lpthread -lrpusbdisp-drv -ldeps_wraps -linfra -lusb-1.0
 
 ${RPUSBDISPDEMO_OBJ}: ${RPUSBDISPDEMO_SRC}
 	$(CXX) -c -o $@ $(CPPFLAGS) -Iinfra/include -Ideps-wraps/libusbx_wrap/include -Irpusbdisp-drv/include $(patsubst %.o,%.cc,$@)
