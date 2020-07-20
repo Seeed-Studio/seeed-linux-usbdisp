@@ -14,40 +14,61 @@
 #include <stdio.h>
 #include <memory.h>
 
-#define RP_USB_DISPLAY_VID    0xFCCFu
-#define RP_USB_DISPLAY_PID    0xA001u
+#define RP_USB_DISPLAY_VID                           0xFCCFu
+#define RP_USB_DISPLAY_PID                           0xA001u
 
-#define WIO_DISP_USB_VENDOR_ID  0x2886 // Seeed Studio vendor id
-#define WIO_DISP_USB_PRODUCT_ID 0x802D
+#define WIO_DISP_USB_VENDOR_ID                       0x2886 // Seeed Studio vendor id
+#define WIO_DISP_USB_PRODUCT_ID                      0x802D // Seeed Studio product id
 
-#define RP_USB_DISPLAY_STATUS_ENDPOINT  0x82u
-#define RP_USB_DISPLAY_DISPLAY_ENDPOINT  0x01u
+#define RP_USB_DISPLAY_STATUS_ENDPOINT               0x82u  //RP USB Endpoint
+#define RP_USB_DISPLAY_DISPLAY_ENDPOINT              0x01u
 
-#define RP_USB_DISPLAY_WIDTH 320
-#define RP_USB_DISPLAY_HEIGHT 240
+#define RP_USB_DISPLAY_WIDTH                         320
+#define RP_USB_DISPLAY_HEIGHT                        240
 
-#define RP_USB_DISPLAY_MIN_VERSION_FILL 0x0104u
-#define RP_USB_DISPLAY_MIN_VERSION_BITBLT_RLE 0x0104u
+#define RP_USB_DISPLAY_MIN_VERSION_FILL              0x0104u
+#define RP_USB_DISPLAY_MIN_VERSION_BITBLT_RLE        0x0104u
 #define RP_USB_DISPLAY_MIN_VERSION_COPY_AREA_BUG_FIX 0x0104u
+
+/*--Select one of them according to the demo for WioTerminal--*/
+#define USBDisplayAndMouseControl_Demo_for_WioTerminal
+//#define NullFunctional_Demo_for_WioTerminal
+
+#ifdef USBDisplayAndMouseControl_Demo_for_WioTerminal
+    #define WIO_USB_DISPLAY_STATUS_ENDPOINT          0x86  //wio terminal USB Endpoint
+    #define WIO_USB_DISPLAY_DISPLAY_ENDPOINT         0x05
+    #define CDC_Dervice_Number                       3
+#endif
+#ifdef NullFunctional_Demo_for_WioTerminal
+    #define WIO_USB_DISPLAY_STATUS_ENDPOINT          0x85  //wio terminal USB Endpoint
+    #define WIO_USB_DISPLAY_DISPLAY_ENDPOINT         0x04
+    #define CDC_Dervice_Number                       2
+#endif
 
 using namespace std;
 using namespace rp::util;
 using namespace rp::deps::libusbx_wrap;
 
 namespace rp { namespace drivers { namespace display {
-    
+
+    //const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = RP_USB_DISPLAY_VID;
+    //const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceProductId = RP_USB_DISPLAY_PID;
+
     const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = WIO_DISP_USB_VENDOR_ID;
     const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceProductId = WIO_DISP_USB_PRODUCT_ID;
     
-    const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint = RP_USB_DISPLAY_STATUS_ENDPOINT;
-    const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint = RP_USB_DISPLAY_DISPLAY_ENDPOINT;
+    //const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint = RP_USB_DISPLAY_STATUS_ENDPOINT;
+    //const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint = RP_USB_DISPLAY_DISPLAY_ENDPOINT;
     
+    const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint = WIO_USB_DISPLAY_STATUS_ENDPOINT;
+    const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint = WIO_USB_DISPLAY_DISPLAY_ENDPOINT;
+
     const int RoboPeakUsbDisplayDevice::ScreenWidth = RP_USB_DISPLAY_WIDTH;
     const int RoboPeakUsbDisplayDevice::ScreenHeight = RP_USB_DISPLAY_HEIGHT;
 
     class RoboPeakUsbDisplayDeviceImpl : public enable_shared_from_this<RoboPeakUsbDisplayDeviceImpl>, public noncopyable {
     public:
-        RoboPeakUsbDisplayDeviceImpl(shared_ptr<DeviceHandle> device) : device_(device), interfaceScope_(device, 0) {
+        RoboPeakUsbDisplayDeviceImpl(shared_ptr<DeviceHandle> device) : device_(device), interfaceScope_(device, CDC_Dervice_Number) {
             status_.display_status = 0x80u;
             status_.touch_status = 0;
             status_.touch_x = 0;
@@ -75,7 +96,8 @@ namespace rp { namespace drivers { namespace display {
         }
         
         shared_ptr<Transfer> sendDataToDisplayEndpointNoWait(shared_ptr<Buffer> buffer) {
-            shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionOut, EndpointTransferTypeBulk, 0x01);
+            //shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionOut, EndpointTransferTypeBulk, RP_USB_DISPLAY_DISPLAY_ENDPOINT);
+            shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionOut, EndpointTransferTypeBulk, RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint);
             transfer->setTransferBuffer(buffer);
             
             shared_ptr<Pipeline> pipeline = Context::defaultContext()->summonPipeline();
@@ -272,7 +294,6 @@ namespace rp { namespace drivers { namespace display {
                 
                 if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
                     continue;
-                
                 return device;
             }
             
@@ -287,7 +308,6 @@ namespace rp { namespace drivers { namespace display {
             
             return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
         }
-        
     private:
         void statusFetchingWorker_() {
             shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionIn, EndpointTransferTypeInterrupt, RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint);
@@ -413,5 +433,4 @@ namespace rp { namespace drivers { namespace display {
     shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openFirstDevice() {
         return RoboPeakUsbDisplayDeviceImpl::openFirstDevice();
     }
-    
 }}}

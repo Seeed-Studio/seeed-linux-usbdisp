@@ -12,10 +12,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RP_INFRA_PLATFORM_WINDOWS
-#	include <io.h>
-#	include <process.h>
+#include <io.h>
+#include <process.h>
 #else
-#	include <unistd.h>
+#include <unistd.h>
 #endif
 #include <math.h>
 #include <stdlib.h>
@@ -33,7 +33,9 @@ using namespace rp::deps::libusbx_wrap;
 using namespace rp::drivers::display;
 
 static void onStatusUpdated(const rpusbdisp_status_normal_packet_t& status) {
-    printf("Status: %02X, Touch: %02X, X: %d, Y: %d\n", status.display_status, status.touch_status, status.touch_x, status.touch_y);
+    //printf("Status: %02X, Touch: %02X, X: %d, Y: %d\n", status.display_status, status.touch_status, status.touch_x, status.touch_y);
+    //printf("Seeed Linux USB Display --------> UserMode Demo\n");
+    printf(".");
 }
 
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
@@ -46,7 +48,6 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
         }
         
         printf("Display with S/N %s is chosen\n", display->getDevice()->getSerialNumber().c_str());
-        
         
         display->setStatusUpdatedCallback(onStatusUpdated);
         display->enable();
