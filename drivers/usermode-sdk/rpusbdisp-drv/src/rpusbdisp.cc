@@ -30,9 +30,10 @@
 #define RP_USB_DISPLAY_MIN_VERSION_BITBLT_RLE        0x0104u
 #define RP_USB_DISPLAY_MIN_VERSION_COPY_AREA_BUG_FIX 0x0104u
 
-/*--Select one of them according to the demo for WioTerminal--*/
+/*-Choose one of them according to the demo for WioTerminal-*/
 #define USBDisplayAndMouseControl_Demo_for_WioTerminal
 //#define NullFunctional_Demo_for_WioTerminal
+/*----------------------------------------------------------*/
 
 #ifdef USBDisplayAndMouseControl_Demo_for_WioTerminal
     #define WIO_USB_DISPLAY_STATUS_ENDPOINT          0x86  //wio terminal USB Endpoint
@@ -49,8 +50,10 @@ using namespace std;
 using namespace rp::util;
 using namespace rp::deps::libusbx_wrap;
 
-namespace rp { namespace drivers { namespace display {
+static size_t _Flag;
 
+namespace rp { namespace drivers { namespace display {
+    
     //const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = RP_USB_DISPLAY_VID;
     //const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceProductId = RP_USB_DISPLAY_PID;
 
@@ -62,10 +65,10 @@ namespace rp { namespace drivers { namespace display {
     
     const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint = WIO_USB_DISPLAY_STATUS_ENDPOINT;
     const uint8_t RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint = WIO_USB_DISPLAY_DISPLAY_ENDPOINT;
-
+    
     const int RoboPeakUsbDisplayDevice::ScreenWidth = RP_USB_DISPLAY_WIDTH;
     const int RoboPeakUsbDisplayDevice::ScreenHeight = RP_USB_DISPLAY_HEIGHT;
-
+    
     class RoboPeakUsbDisplayDeviceImpl : public enable_shared_from_this<RoboPeakUsbDisplayDeviceImpl>, public noncopyable {
     public:
         RoboPeakUsbDisplayDeviceImpl(shared_ptr<DeviceHandle> device) : device_(device), interfaceScope_(device, CDC_Dervice_Number) {
@@ -89,12 +92,12 @@ namespace rp { namespace drivers { namespace display {
             lock_guard<mutex> guard(statusLock_);
             statusUpdatedCallback_ = callback;
         }
-        
+
         rpusbdisp_status_normal_packet_t getStatus() {
             lock_guard<mutex> guard(statusLock_);
             return status_;
         }
-        
+
         shared_ptr<Transfer> sendDataToDisplayEndpointNoWait(shared_ptr<Buffer> buffer) {
             //shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionOut, EndpointTransferTypeBulk, RP_USB_DISPLAY_DISPLAY_ENDPOINT);
             shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionOut, EndpointTransferTypeBulk, RoboPeakUsbDisplayDevice::UsbDeviceDisplayEndpoint);
@@ -105,10 +108,10 @@ namespace rp { namespace drivers { namespace display {
             
             transfer->submit();
             transfer->waitForCompletion();
-
+            
             return transfer;
         }
-        
+
         void sendDataToDisplayEndpoint(shared_ptr<Buffer> buffer) {
             auto transfer = sendDataToDisplayEndpointNoWait(buffer);
             
@@ -119,7 +122,7 @@ namespace rp { namespace drivers { namespace display {
                     throw Exception(transfer->getStatus());
             }
         }
-        
+
         template<typename PacketT>
         void sendCommandToDisplayEndpoint(PacketT& packet, shared_ptr<Buffer> payload=nullptr) {
             size_t totalSize = sizeof(PacketT);
@@ -172,7 +175,7 @@ namespace rp { namespace drivers { namespace display {
             transfer->submit();
             
             transfer->waitForCompletion();
-
+            
             switch (transfer->getStatus()) {
                 case deps::libusbx_wrap::TransferStatusCompleted:
                     return;
@@ -180,7 +183,7 @@ namespace rp { namespace drivers { namespace display {
                     throw Exception(transfer->getStatus());
             }
         }
-        
+
         void fill(uint16_t color) {
             if (device_->getDevice()->getFirmwareVersion() < RP_USB_DISPLAY_MIN_VERSION_FILL) {
                 int width = getWidth(), height = getHeight();
@@ -194,7 +197,7 @@ namespace rp { namespace drivers { namespace display {
                 sendCommandToDisplayEndpoint(fillPacket);
             }
         }
-        
+
         void bitblt(uint16_t x, uint16_t y, uint16_t width, uint16_t height, RoboPeakUsbDisplayBitOperation bitOperation, void* buffer) {
             size_t payloadSize = (size_t)(width * height * 2);
             
@@ -222,7 +225,7 @@ namespace rp { namespace drivers { namespace display {
             
             sendCommandToDisplayEndpoint(packet, payload);
         }
-        
+
         void fillrect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint16_t color, RoboPeakUsbDisplayBitOperation bitOperation) {
             rpusbdisp_disp_fillrect_packet_t fillRectPacket;
             
@@ -236,7 +239,7 @@ namespace rp { namespace drivers { namespace display {
             
             sendCommandToDisplayEndpoint(fillRectPacket);
         }
-        
+
         void copyArea(uint16_t srcX, uint16_t srcY, uint16_t destX, uint16_t destY, uint16_t width, uint16_t height) {
             rpusbdisp_disp_copyarea_packet_t packet;
             
@@ -254,7 +257,7 @@ namespace rp { namespace drivers { namespace display {
                 sendCommandToDisplayEndpoint(packet);
             }
         }
-        
+
         void enable() {
             call_once(statusThreadOnceFlag_, bind(&RoboPeakUsbDisplayDeviceImpl::doEnable_, this));
             
@@ -262,27 +265,27 @@ namespace rp { namespace drivers { namespace display {
             this_thread::sleep_for(chrono::milliseconds(200));
             this->fill(0xcb20u);
         }
-        
+
         int getWidth() const {
             return RoboPeakUsbDisplayDevice::ScreenWidth;
         }
-        
+
         int getHeight() const {
             return RoboPeakUsbDisplayDevice::ScreenHeight;
         }
-        
+
         bool isAlive() const {
             return working_.load();
         }
-        
+
         shared_ptr<DeviceHandle> getDevice() {
             return device_;
         }
-        
+
         static vector<shared_ptr<Device>> enumDevices() {
             return Context::defaultContext()->lookupDevices(RoboPeakUsbDisplayDevice::UsbDeviceVendorId, RoboPeakUsbDisplayDevice::UsbDeviceProductId);
         }
-        
+
         static shared_ptr<Device> findFirstDevice() {
             shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
             
@@ -294,12 +297,67 @@ namespace rp { namespace drivers { namespace display {
                 
                 if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
                     continue;
+                _Flag = i;
                 return device;
             }
             
             return nullptr;
         }
-        
+
+        static shared_ptr<Device> findSecondDevice() {
+            shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
+            
+            for (size_t i = _Flag+1; i < devices->count(); i++) {
+                shared_ptr<Device> device = devices->getDevice(i);
+                
+                if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
+                    continue;
+                
+                if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
+                    continue;
+                _Flag = i;
+                return device;
+            }
+            
+            return nullptr;
+        }
+
+        static shared_ptr<Device> findThirdDevice() {
+            shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
+            
+            for (size_t i = _Flag+1; i < devices->count(); i++) {
+                shared_ptr<Device> device = devices->getDevice(i);
+                
+                if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
+                    continue;
+                
+                if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
+                    continue;
+                _Flag = i;
+                return device;
+            }
+            
+            return nullptr;
+        }
+
+        static shared_ptr<Device> findFourthDevice() {
+            shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
+            
+            for (size_t i = _Flag+1; i < devices->count(); i++) {
+                shared_ptr<Device> device = devices->getDevice(i);
+                
+                if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
+                    continue;
+                
+                if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
+                    continue;
+                _Flag = i;
+                return device;
+            }
+            
+            return nullptr;
+        }
+
         static shared_ptr<RoboPeakUsbDisplayDevice> openFirstDevice() {
             shared_ptr<Device> device = findFirstDevice();
             
@@ -308,11 +366,39 @@ namespace rp { namespace drivers { namespace display {
             
             return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
         }
+
+        static shared_ptr<RoboPeakUsbDisplayDevice> openSecondDevice() {
+            shared_ptr<Device> device = findSecondDevice();
+            
+            if (!device)
+                return nullptr;
+            
+            return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
+        }
+
+        static shared_ptr<RoboPeakUsbDisplayDevice> openThirdDevice() {
+            shared_ptr<Device> device = findThirdDevice();
+            
+            if (!device)
+                return nullptr;
+            
+            return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
+        }
+
+        static shared_ptr<RoboPeakUsbDisplayDevice> openFourthDevice() {
+            shared_ptr<Device> device = findFourthDevice();
+            
+            if (!device)
+                return nullptr;
+            
+            return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
+        }
+
     private:
         void statusFetchingWorker_() {
             shared_ptr<Transfer> transfer = device_->allocTransfer(EndpointDirectionIn, EndpointTransferTypeInterrupt, RoboPeakUsbDisplayDevice::UsbDeviceStatusEndpoint);
             transfer->setTransferBuffer(shared_ptr<Buffer>(new Buffer(32)));
-
+            
             while (working_.load()) {
                 try {
                     transfer->submit();
@@ -350,7 +436,7 @@ namespace rp { namespace drivers { namespace display {
                 }
             }
         }
-        
+
         void doEnable_() {
             lock_guard<mutex> guard(statusLock_);
             this->pipeline_ = Context::defaultContext()->summonPipeline();
@@ -381,56 +467,81 @@ namespace rp { namespace drivers { namespace display {
     void RoboPeakUsbDisplayDevice::setStatusUpdatedCallback(std::function<void (const rpusbdisp_status_normal_packet_t &)> callback) {
         impl_->setStatusUpdatedCallback(callback);
     }
-    
+
     rpusbdisp_status_normal_packet_t RoboPeakUsbDisplayDevice::getStatus() {
         return impl_->getStatus();
     }
-    
+
     void RoboPeakUsbDisplayDevice::fill(uint16_t color) {
         impl_->fill(color);
     }
-    
+
     void RoboPeakUsbDisplayDevice::bitblt(uint16_t x, uint16_t y, uint16_t width, uint16_t height, RoboPeakUsbDisplayBitOperation bitOperation, void *buffer) {
         impl_->bitblt(x, y, width, height, bitOperation, buffer);
     }
-    
+
     void RoboPeakUsbDisplayDevice::fillrect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint16_t color, RoboPeakUsbDisplayBitOperation bitOperation) {
         impl_->fillrect(left, top, right, bottom, color, bitOperation);
     }
-    
+
     void RoboPeakUsbDisplayDevice::copyArea(uint16_t srcX, uint16_t srcY, uint16_t destX, uint16_t destY, uint16_t width, uint16_t height) {
         impl_->copyArea(srcX, srcY, destX, destY, width, height);
     }
-    
+
     void RoboPeakUsbDisplayDevice::enable() {
         impl_->enable();
     }
-    
+
     int RoboPeakUsbDisplayDevice::getWidth() const {
         return impl_->getWidth();
     }
-    
+
     int RoboPeakUsbDisplayDevice::getHeight() const {
         return impl_->getHeight();
     }
-    
+
     bool RoboPeakUsbDisplayDevice::isAlive() {
         return impl_->isAlive();
     }
-    
+
     shared_ptr<DeviceHandle> RoboPeakUsbDisplayDevice::getDevice() {
         return impl_->getDevice();
     }
-    
+
     vector<shared_ptr<Device>> RoboPeakUsbDisplayDevice::enumDevices() {
         return RoboPeakUsbDisplayDeviceImpl::enumDevices();
     }
-    
+
     shared_ptr<Device> RoboPeakUsbDisplayDevice::findFirstDevice() {
         return RoboPeakUsbDisplayDeviceImpl::findFirstDevice();
     }
-    
+
+    shared_ptr<Device> RoboPeakUsbDisplayDevice::findSecondDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::findSecondDevice();
+    }
+
+    shared_ptr<Device> RoboPeakUsbDisplayDevice::findThirdDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::findThirdDevice();
+    }
+
+    shared_ptr<Device> RoboPeakUsbDisplayDevice::findFourthDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::findFourthDevice();
+    }
+
     shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openFirstDevice() {
         return RoboPeakUsbDisplayDeviceImpl::openFirstDevice();
     }
+
+    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openSecondDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::openSecondDevice();
+    }
+
+    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openThirdDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::openThirdDevice();
+    }
+
+    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openFourthDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::openFourthDevice();
+    }
+
 }}}
