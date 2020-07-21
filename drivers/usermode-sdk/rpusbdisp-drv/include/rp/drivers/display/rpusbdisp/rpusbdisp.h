@@ -78,26 +78,26 @@ namespace rp { namespace drivers { namespace display {
         
         static const int ScreenWidth;
         static const int ScreenHeight;
-        
+
         /**
          * \brief Set the callback to be called when the status of the display is updated
          *
          * \param callback The callback
          */
         void setStatusUpdatedCallback(std::function<void(const rpusbdisp_status_normal_packet_t&)> callback);
-        
+
         /**
          * \brief Get device status
          */
         rpusbdisp_status_normal_packet_t getStatus();
-        
+
         /**
          * \brief Fill the whole screen with color
          *
          * \param color A 16 bit color represent in B5G6R5 format
          */
         void fill(uint16_t color);
-        
+
         /**
          * \brief Draw image to the display
          *
@@ -109,7 +109,7 @@ namespace rp { namespace drivers { namespace display {
          * \param buffer The buffer of the image, should be more than (width*height*2) bytes, and each pixel should be in B5G6B5 pixel format
          */
         void bitblt(uint16_t x, uint16_t y, uint16_t width, uint16_t height, RoboPeakUsbDisplayBitOperation bitOperation, void* buffer);
-        
+
         /**
          * \brief Fill a rectangle of the display with a solid color
          *
@@ -122,7 +122,7 @@ namespace rp { namespace drivers { namespace display {
          * \param bitOperation The pixel bit operation will be done when filling the rectangle
          */
         void fillrect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint16_t color, RoboPeakUsbDisplayBitOperation bitOperation);
-        
+
         /**
          * \brief Copy a part of the existing image of the screen to another position of the display
          *
@@ -134,44 +134,44 @@ namespace rp { namespace drivers { namespace display {
          * \param height Height of the copying area
          */
         void copyArea(uint16_t srcX, uint16_t srcY, uint16_t destX, uint16_t destY, uint16_t width, uint16_t height);
-        
+
         /**
          * \brief Enable the device
          *
          * The device polling process is off before this method is invoked, so before you use the device, you should call this method to take the polling process online.
          */
         void enable();
-        
+
         /**
          * \brief The width of the display (in pixel)
          */
         int getWidth() const;
-        
+
         /**
          * \brief The height of the display (in pixel)
          */
         int getHeight() const;
-        
+
         /**
          * \brief Indicate if the device is alive and healthy
          */
         bool isAlive();
-        
+
         /**
          * \brief Get the inner raw usb device
          */
         std::shared_ptr<rp::deps::libusbx_wrap::DeviceHandle> getDevice();
-        
+
         /**
          * \brief Enumerate all USB devices that match the VID and PID of USB Display
          */
         static std::vector<std::shared_ptr<rp::deps::libusbx_wrap::Device> > enumDevices();
-        
+
         /**
          * \brief Find the first device that has the required VID and PID
          */
         static std::shared_ptr<rp::deps::libusbx_wrap::Device> findFirstDevice();
-        
+
         /**
          * \brief Find the second device that has the required VID and PID
          */
@@ -191,7 +191,7 @@ namespace rp { namespace drivers { namespace display {
          * \brief Open the first device that match the requirement
          */
         static std::shared_ptr<RoboPeakUsbDisplayDevice> openFirstDevice();
-        
+
         /**
          * \brief Open the second device that match the requirement
          */
