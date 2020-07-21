@@ -32,12 +32,218 @@ using namespace rp::util;
 using namespace rp::deps::libusbx_wrap;
 using namespace rp::drivers::display;
 
+/*---Choose one of them according to your requrest----*/
+//#define One_WioTerminal_For_One_Screen_Display
+//#define Two_WioTerminal_For_Two_Screen_Display
+//#define Three_WioTerminal_For_Three_Screen_Display
+#define Four_WioTerminal_For_Four_Screen_Display
+/*----------------------------------------------------*/
+
 static void onStatusUpdated(const rpusbdisp_status_normal_packet_t& status) {
     //printf("Status: %02X, Touch: %02X, X: %d, Y: %d\n", status.display_status, status.touch_status, status.touch_x, status.touch_y);
     //printf("Seeed Linux USB Display --------> UserMode Demo\n");
     //printf(".");
 }
 
+#ifdef One_WioTerminal_For_One_Screen_Display
+static int cPlusPlusInterfaceDemo(void* framebuffer) {
+    try {
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
+        
+        if (!display1) {
+            fprintf(stderr, "No display1 found\n");
+            return -1;
+        }
+        
+        printf("Display1 with S/N %s is chosen\n", display1->getDevice()->getSerialNumber().c_str());
+        
+        display1->setStatusUpdatedCallback(onStatusUpdated);
+        display1->enable();
+        
+        printf("Set up successful!\n");
+        
+        this_thread::sleep_for(chrono::seconds(2));
+        
+        printf("Start displaying...\n");
+        
+        while (display1->isAlive()) {
+            display1->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            for (int i = 0; i < 100; i++) {
+                uint16_t x = rand()%320;
+                uint16_t y = rand()%240;
+                uint16_t width = 1+(rand()%320);
+                uint16_t height = 1+(rand()%240);
+                uint16_t color = rand()&0xffffu;
+                RoboPeakUsbDisplayBitOperation bitOperation = (RoboPeakUsbDisplayBitOperation)(rand()%4);
+                
+                display1->fillrect(x, y, x + width, y + height, color, bitOperation);
+            }
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->copyArea(0, 0, 160, 120, 160, 120);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->fill(0xcb20u);
+            this_thread::sleep_for(chrono::seconds(2));
+        }
+        
+        fprintf(stderr, "Display is disconnected\n");
+    } catch (Exception& e) {
+        e.printToConsole();
+        return e.errorCode();
+    }
+    
+    return 0;
+}
+#endif
+
+#ifdef Two_WioTerminal_For_Two_Screen_Display
+static int cPlusPlusInterfaceDemo(void* framebuffer) {
+    try {
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openSecondDevice();
+        
+        if (!display1) {
+            fprintf(stderr, "No display1 found\n");
+            return -1;
+        }
+        if (!display2) {
+            fprintf(stderr, "No display2 found\n");
+            return -1;
+        }
+        
+        printf("Display1 with S/N %s is chosen\n", display1->getDevice()->getSerialNumber().c_str());
+        printf("Display2 with S/N %s is chosen\n", display2->getDevice()->getSerialNumber().c_str());
+        
+        display1->setStatusUpdatedCallback(onStatusUpdated);
+        display1->enable();
+        display2->setStatusUpdatedCallback(onStatusUpdated);
+        display2->enable();
+        
+        printf("Set up successful!\n");
+        
+        this_thread::sleep_for(chrono::seconds(2));
+        
+        printf("Start displaying...\n");
+        
+        while (display1->isAlive() && display2->isAlive()) {
+            display1->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            display2->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            for (int i = 0; i < 100; i++) {
+                uint16_t x = rand()%320;
+                uint16_t y = rand()%240;
+                uint16_t width = 1+(rand()%320);
+                uint16_t height = 1+(rand()%240);
+                uint16_t color = rand()&0xffffu;
+                RoboPeakUsbDisplayBitOperation bitOperation = (RoboPeakUsbDisplayBitOperation)(rand()%4);
+                
+                display1->fillrect(x, y, x + width, y + height, color, bitOperation);
+                display2->fillrect(x, y, x + width, y + height, color, bitOperation);
+            }
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->copyArea(0, 0, 160, 120, 160, 120);
+            display2->copyArea(0, 0, 160, 120, 160, 120);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->fill(0xcb20u);
+            display2->fill(0xcb20u);
+            this_thread::sleep_for(chrono::seconds(2));
+        }
+        
+        fprintf(stderr, "Display is disconnected\n");
+    } catch (Exception& e) {
+        e.printToConsole();
+        return e.errorCode();
+    }
+    
+    return 0;
+}
+#endif
+
+#ifdef Three_WioTerminal_For_Three_Screen_Display
+static int cPlusPlusInterfaceDemo(void* framebuffer) {
+    try {
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openSecondDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display3 = RoboPeakUsbDisplayDevice::openThirdDevice();
+        
+        if (!display1) {
+            fprintf(stderr, "No display1 found\n");
+            return -1;
+        }
+        if (!display2) {
+            fprintf(stderr, "No display2 found\n");
+            return -1;
+        }
+        if (!display3) {
+            fprintf(stderr, "No display3 found\n");
+            return -1;
+        }
+        
+        printf("Display1 with S/N %s is chosen\n", display1->getDevice()->getSerialNumber().c_str());
+        printf("Display2 with S/N %s is chosen\n", display2->getDevice()->getSerialNumber().c_str());
+        printf("Display3 with S/N %s is chosen\n", display3->getDevice()->getSerialNumber().c_str());
+        
+        display1->setStatusUpdatedCallback(onStatusUpdated);
+        display1->enable();
+        display2->setStatusUpdatedCallback(onStatusUpdated);
+        display2->enable();
+        display3->setStatusUpdatedCallback(onStatusUpdated);
+        display3->enable();
+        
+        printf("Set up successful!\n");
+        
+        this_thread::sleep_for(chrono::seconds(2));
+        
+        printf("Start displaying...\n");
+        
+        while (display1->isAlive() && display2->isAlive() && display3->isAlive()) {
+            display1->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            display2->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            display3->bitblt(0, 0, 320, 240, RoboPeakUsbDisplayBitOperationCopy, framebuffer);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            for (int i = 0; i < 100; i++) {
+                uint16_t x = rand()%320;
+                uint16_t y = rand()%240;
+                uint16_t width = 1+(rand()%320);
+                uint16_t height = 1+(rand()%240);
+                uint16_t color = rand()&0xffffu;
+                RoboPeakUsbDisplayBitOperation bitOperation = (RoboPeakUsbDisplayBitOperation)(rand()%4);
+                
+                display1->fillrect(x, y, x + width, y + height, color, bitOperation);
+                display2->fillrect(x, y, x + width, y + height, color, bitOperation);
+                display3->fillrect(x, y, x + width, y + height, color, bitOperation);
+            }
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->copyArea(0, 0, 160, 120, 160, 120);
+            display2->copyArea(0, 0, 160, 120, 160, 120);
+            display3->copyArea(0, 0, 160, 120, 160, 120);
+            this_thread::sleep_for(chrono::seconds(2));
+            
+            display1->fill(0xcb20u);
+            display2->fill(0xcb20u);
+            display3->fill(0xcb20u);
+            this_thread::sleep_for(chrono::seconds(2));
+        }
+        
+        fprintf(stderr, "Display is disconnected\n");
+    } catch (Exception& e) {
+        e.printToConsole();
+        return e.errorCode();
+    }
+    
+    return 0;
+}
+#endif
+
+#ifdef Four_WioTerminal_For_Four_Screen_Display
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
     try {
         shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
@@ -125,6 +331,7 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
     
     return 0;
 }
+#endif
 
 #else
 
