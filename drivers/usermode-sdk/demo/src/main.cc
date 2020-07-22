@@ -1,10 +1,46 @@
-//
-//  main.cc
-//  RoboPeak Mini USB Display SDK demo
-//
-//  Created by Tony Huang on 12/7/13.
-//  Copyright (c) 2013 RoboPeak.com. All rights reserved.
-//
+/*
+ * main.cc
+ * Seeed Linux USB Display SDK demo
+ *
+ * A demo for Wio Terminal to multi-screen display in linux.
+ * Support for user to choose demo using command line.
+ *
+ * Copyright (c) 2020 seeed technology co., ltd.
+ * Author      : weihong.cai (weihong.cai@seeed.cc)
+ * Create Time : July 2020
+ * Change Log  :
+ *
+ * The MIT License (MIT)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software istm furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions
+ * of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS INcommInterface
+ * THE SOFTWARE.
+ *
+ * Get started:
+ *     1. Go to the linux-driver path:
+ *         $ cd ~/seeed-linux-usbdisp/drivers/usermode-sdk/
+ *     2. Build project:
+ *         $ make
+ *     3. Run demo:
+ *         $ cd ./bilid/
+ *        There are four test_demos for one-screen display, two-screen display, three-screen display, four-screen display.
+ *        You can choose one of them according to your requrest.
+ *        Such as:
+ *         $ sudo ./rpusbdispdemo --demo 1
+ *         $ sudo ./rpusbdispdemo --demo 2
+ *         $ sudo ./rpusbdispdemo --demo 3
+ *         $ sudo ./rpusbdispdemo --demo 4
+ */
 
 #include <rp/infra_config.h>
 #include <memory>
@@ -423,12 +459,13 @@ int main(int argc, char * argv[]) {
     
     int ch;
     int num;
+    int result;
 
     static struct option long_options[] = {
-        { "demo",                   1, 0, 'd'},
-        //{ "PER_FREAM_PACKET",       1, 0, 'p'},
-        //{ "auto test from 1 to 10", 0, 0, 'A'},
-        {0, 0, 0, 0},
+        { "demo",       required_argument, 0, 'd'},
+        //{ "select",     required_argument, 0, 's'},
+        //{ "fillScreen", required_argument, 0, 'f'},
+        { 0,            0,                 0,  0 },
     };
     
     static char optstring[] = "d:";
@@ -469,7 +506,6 @@ int main(int argc, char * argv[]) {
         }
     }
     
-    int result;
     if     (num==1) result = cPlusPlusInterfaceDemo1(framebuffer);
     else if(num==2) result = cPlusPlusInterfaceDemo2(framebuffer);
     else if(num==3) result = cPlusPlusInterfaceDemo3(framebuffer);
