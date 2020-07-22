@@ -24,6 +24,10 @@
 #include <rp/drivers/display/rpusbdisp/rpusbdisp.h>
 #include <rp/drivers/display/rpusbdisp/c_interface.h>
 
+#include <unistd.h>
+#include <string.h>
+#include <getopt.h>
+
 #undef USE_C_INTERFACE
 
 #ifndef USE_C_INTERFACE
@@ -36,7 +40,7 @@ using namespace rp::drivers::display;
 //#define One_WioTerminal_For_One_Screen_Display
 //#define Two_WioTerminal_For_Two_Screen_Display
 //#define Three_WioTerminal_For_Three_Screen_Display
-#define Four_WioTerminal_For_Four_Screen_Display
+//#define Four_WioTerminal_For_Four_Screen_Display
 /*----------------------------------------------------*/
 
 static void onStatusUpdated(const rpusbdisp_status_normal_packet_t& status) {
@@ -45,8 +49,8 @@ static void onStatusUpdated(const rpusbdisp_status_normal_packet_t& status) {
     //printf(".");
 }
 
-#ifdef One_WioTerminal_For_One_Screen_Display
-static int cPlusPlusInterfaceDemo(void* framebuffer) {
+//#ifdef One_WioTerminal_For_One_Screen_Display
+static int cPlusPlusInterfaceDemo1(void* framebuffer) {
     try {
         shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
         
@@ -97,10 +101,10 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
     
     return 0;
 }
-#endif
+//#endif
 
-#ifdef Two_WioTerminal_For_Two_Screen_Display
-static int cPlusPlusInterfaceDemo(void* framebuffer) {
+//#ifdef Two_WioTerminal_For_Two_Screen_Display
+static int cPlusPlusInterfaceDemo2(void* framebuffer) {
     try {
         shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
         shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
@@ -163,10 +167,10 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
     
     return 0;
 }
-#endif
+//#endif
 
-#ifdef Three_WioTerminal_For_Three_Screen_Display
-static int cPlusPlusInterfaceDemo(void* framebuffer) {
+//#ifdef Three_WioTerminal_For_Three_Screen_Display
+static int cPlusPlusInterfaceDemo3(void* framebuffer) {
     try {
         shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
         shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
@@ -241,10 +245,10 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
     
     return 0;
 }
-#endif
+//#endif
 
-#ifdef Four_WioTerminal_For_Four_Screen_Display
-static int cPlusPlusInterfaceDemo(void* framebuffer) {
+//#ifdef Four_WioTerminal_For_Four_Screen_Display
+static int cPlusPlusInterfaceDemo4(void* framebuffer) {
     try {
         shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
         shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
@@ -331,7 +335,7 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
     
     return 0;
 }
-#endif
+//#endif
 
 #else
 
@@ -413,10 +417,48 @@ static int cInterfaceDemo(void* framebuffer) {
 }
 #endif
 
-int main(void) {
+int main(int argc, char * argv[]) {
     uint16_t* framebuffer = (uint16_t*)malloc(320*240*2);
     uint16_t* p = framebuffer;
     
+    int ch;
+    int num;
+
+    static struct option long_options[] = {
+        { "demo",                   1, 0, 'd'},
+        //{ "PER_FREAM_PACKET",       1, 0, 'p'},
+        //{ "auto test from 1 to 10", 0, 0, 'A'},
+        {0, 0, 0, 0},
+    };
+    
+    static char optstring[] = "d:";
+    
+    while((ch = getopt_long(argc, argv, optstring, long_options, NULL)) != -1){
+        switch (ch)
+        {
+        case 'd':
+            if(strcmp(optarg, "1")==0){
+                printf("Open Demo_%s\n", optarg);
+                num = 1;
+            }else if(strcmp(optarg, "2")==0){
+                printf("Open Demo_%s\n", optarg);
+                num = 2;
+            }else if(strcmp(optarg, "3")==0){
+                printf("Open Demo_%s\n", optarg);
+                num = 3;
+            }else if(strcmp(optarg, "4")==0){
+                printf("Open Demo_%s\n", optarg);
+                num = 4;
+            }else{
+                printf("Invalid number.\n");
+            }
+            break;
+        
+        default:
+            printf("Unknown option: %c\n",(char)optopt);
+            break;
+        }
+    }
     for (int y = 0; y < 240; y++) {
         for (int x = 0; x < 320; x++, p++) {
             if (x == 8 || x == 311 || y == 8 || y == 231) {
@@ -426,12 +468,19 @@ int main(void) {
             }
         }
     }
+    
+    int result;
+    if     (num==1) result = cPlusPlusInterfaceDemo1(framebuffer);
+    else if(num==2) result = cPlusPlusInterfaceDemo2(framebuffer);
+    else if(num==3) result = cPlusPlusInterfaceDemo3(framebuffer);
+    else if(num==4) result = cPlusPlusInterfaceDemo4(framebuffer);
+    else printf("Please enter command line again.\n");
 
-#ifndef USE_C_INTERFACE
-    int result = cPlusPlusInterfaceDemo(framebuffer);
-#else
-    int result = cInterfaceDemo(framebuffer);
-#endif
+//#ifndef USE_C_INTERFACE
+//    int result = cPlusPlusInterfaceDemo(framebuffer);
+//#else
+//    int result = cInterfaceDemo(framebuffer);
+//#endif
 
     free(framebuffer);
     
