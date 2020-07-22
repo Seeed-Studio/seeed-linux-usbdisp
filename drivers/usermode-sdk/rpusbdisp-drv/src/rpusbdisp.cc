@@ -50,8 +50,6 @@ using namespace std;
 using namespace rp::util;
 using namespace rp::deps::libusbx_wrap;
 
-static size_t _Flag;
-
 namespace rp { namespace drivers { namespace display {
     
     //const uint16_t RoboPeakUsbDisplayDevice::UsbDeviceVendorId = RP_USB_DISPLAY_VID;
@@ -69,6 +67,8 @@ namespace rp { namespace drivers { namespace display {
     const int RoboPeakUsbDisplayDevice::ScreenWidth = RP_USB_DISPLAY_WIDTH;
     const int RoboPeakUsbDisplayDevice::ScreenHeight = RP_USB_DISPLAY_HEIGHT;
     
+    int RoboPeakUsbDisplayDevice::lastDevIndexFound = 0;
+
     class RoboPeakUsbDisplayDeviceImpl : public enable_shared_from_this<RoboPeakUsbDisplayDeviceImpl>, public noncopyable {
     public:
         RoboPeakUsbDisplayDeviceImpl(shared_ptr<DeviceHandle> device) : device_(device), interfaceScope_(device, CDC_Dervice_Number) {
@@ -297,17 +297,17 @@ namespace rp { namespace drivers { namespace display {
                 
                 if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
                     continue;
-                _Flag = i;
+                
                 return device;
             }
             
             return nullptr;
         }
 
-        static shared_ptr<Device> findSecondDevice() {
+        static shared_ptr<Device> findDevice() {
             shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
             
-            for (size_t i = _Flag+1; i < devices->count(); i++) {
+            for (int i = RoboPeakUsbDisplayDevice::lastDevIndexFound; i < devices->count(); i++) {
                 shared_ptr<Device> device = devices->getDevice(i);
                 
                 if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
@@ -315,43 +315,8 @@ namespace rp { namespace drivers { namespace display {
                 
                 if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
                     continue;
-                _Flag = i;
-                return device;
-            }
-            
-            return nullptr;
-        }
-
-        static shared_ptr<Device> findThirdDevice() {
-            shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
-            
-            for (size_t i = _Flag+1; i < devices->count(); i++) {
-                shared_ptr<Device> device = devices->getDevice(i);
                 
-                if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
-                    continue;
-                
-                if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
-                    continue;
-                _Flag = i;
-                return device;
-            }
-            
-            return nullptr;
-        }
-
-        static shared_ptr<Device> findFourthDevice() {
-            shared_ptr<DeviceList> devices = Context::defaultContext()->getDeviceList();
-            
-            for (size_t i = _Flag+1; i < devices->count(); i++) {
-                shared_ptr<Device> device = devices->getDevice(i);
-                
-                if (device->getVid() != RoboPeakUsbDisplayDevice::UsbDeviceVendorId)
-                    continue;
-                
-                if (device->getPid() != RoboPeakUsbDisplayDevice::UsbDeviceProductId)
-                    continue;
-                _Flag = i;
+                RoboPeakUsbDisplayDevice::lastDevIndexFound = i+1;
                 return device;
             }
             
@@ -367,26 +332,8 @@ namespace rp { namespace drivers { namespace display {
             return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
         }
 
-        static shared_ptr<RoboPeakUsbDisplayDevice> openSecondDevice() {
-            shared_ptr<Device> device = findSecondDevice();
-            
-            if (!device)
-                return nullptr;
-            
-            return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
-        }
-
-        static shared_ptr<RoboPeakUsbDisplayDevice> openThirdDevice() {
-            shared_ptr<Device> device = findThirdDevice();
-            
-            if (!device)
-                return nullptr;
-            
-            return shared_ptr<RoboPeakUsbDisplayDevice>(new RoboPeakUsbDisplayDevice(device->open()));
-        }
-
-        static shared_ptr<RoboPeakUsbDisplayDevice> openFourthDevice() {
-            shared_ptr<Device> device = findFourthDevice();
+        static shared_ptr<RoboPeakUsbDisplayDevice> openDevice() {
+            shared_ptr<Device> device = findDevice();
             
             if (!device)
                 return nullptr;
@@ -516,32 +463,16 @@ namespace rp { namespace drivers { namespace display {
         return RoboPeakUsbDisplayDeviceImpl::findFirstDevice();
     }
 
-    shared_ptr<Device> RoboPeakUsbDisplayDevice::findSecondDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::findSecondDevice();
-    }
-
-    shared_ptr<Device> RoboPeakUsbDisplayDevice::findThirdDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::findThirdDevice();
-    }
-
-    shared_ptr<Device> RoboPeakUsbDisplayDevice::findFourthDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::findFourthDevice();
-    }
+    shared_ptr<Device> RoboPeakUsbDisplayDevice::findDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::findDevice();
+    }   
 
     shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openFirstDevice() {
         return RoboPeakUsbDisplayDeviceImpl::openFirstDevice();
     }
 
-    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openSecondDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::openSecondDevice();
-    }
-
-    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openThirdDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::openThirdDevice();
-    }
-
-    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openFourthDevice() {
-        return RoboPeakUsbDisplayDeviceImpl::openFourthDevice();
+    shared_ptr<RoboPeakUsbDisplayDevice> RoboPeakUsbDisplayDevice::openDevice() {
+        return RoboPeakUsbDisplayDeviceImpl::openDevice();
     }
 
 }}}

@@ -78,6 +78,8 @@ namespace rp { namespace drivers { namespace display {
         
         static const int ScreenWidth;
         static const int ScreenHeight;
+        
+        static int lastDevIndexFound;
 
         /**
          * \brief Set the callback to be called when the status of the display is updated
@@ -173,19 +175,9 @@ namespace rp { namespace drivers { namespace display {
         static std::shared_ptr<rp::deps::libusbx_wrap::Device> findFirstDevice();
 
         /**
-         * \brief Find the second device that has the required VID and PID
+         * \brief Find the device that has the required VID and PID
          */
-        static std::shared_ptr<rp::deps::libusbx_wrap::Device> findSecondDevice();
-
-        /**
-         * \brief Find the third device that has the required VID and PID
-         */
-        static std::shared_ptr<rp::deps::libusbx_wrap::Device> findThirdDevice();
-
-        /**
-         * \brief Find the fourth device that has the required VID and PID
-         */
-        static std::shared_ptr<rp::deps::libusbx_wrap::Device> findFourthDevice();
+        static std::shared_ptr<rp::deps::libusbx_wrap::Device> findDevice();
 
         /**
          * \brief Open the first device that match the requirement
@@ -193,19 +185,9 @@ namespace rp { namespace drivers { namespace display {
         static std::shared_ptr<RoboPeakUsbDisplayDevice> openFirstDevice();
 
         /**
-         * \brief Open the second device that match the requirement
+         * \brief Open device that match the requirement
          */
-        static std::shared_ptr<RoboPeakUsbDisplayDevice> openSecondDevice();
-
-        /**
-         * \brief Open the third device that match the requirement
-         */
-        static std::shared_ptr<RoboPeakUsbDisplayDevice> openThirdDevice();
-
-        /**
-         * \brief Open the fourth device that match the requirement
-         */
-        static std::shared_ptr<RoboPeakUsbDisplayDevice> openFourthDevice();
+        static std::shared_ptr<RoboPeakUsbDisplayDevice> openDevice();
     private:
         std::shared_ptr<RoboPeakUsbDisplayDeviceImpl> impl_;
     };

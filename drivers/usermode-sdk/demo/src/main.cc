@@ -48,7 +48,7 @@ static void onStatusUpdated(const rpusbdisp_status_normal_packet_t& status) {
 #ifdef One_WioTerminal_For_One_Screen_Display
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
     try {
-        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
         
         if (!display1) {
             fprintf(stderr, "No display1 found\n");
@@ -102,8 +102,8 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
 #ifdef Two_WioTerminal_For_Two_Screen_Display
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
     try {
-        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openSecondDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
         
         if (!display1) {
             fprintf(stderr, "No display1 found\n");
@@ -168,9 +168,9 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
 #ifdef Three_WioTerminal_For_Three_Screen_Display
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
     try {
-        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openSecondDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display3 = RoboPeakUsbDisplayDevice::openThirdDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display3 = RoboPeakUsbDisplayDevice::openDevice();
         
         if (!display1) {
             fprintf(stderr, "No display1 found\n");
@@ -246,10 +246,10 @@ static int cPlusPlusInterfaceDemo(void* framebuffer) {
 #ifdef Four_WioTerminal_For_Four_Screen_Display
 static int cPlusPlusInterfaceDemo(void* framebuffer) {
     try {
-        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openFirstDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openSecondDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display3 = RoboPeakUsbDisplayDevice::openThirdDevice();
-        shared_ptr<RoboPeakUsbDisplayDevice> display4 = RoboPeakUsbDisplayDevice::openFourthDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display1 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display2 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display3 = RoboPeakUsbDisplayDevice::openDevice();
+        shared_ptr<RoboPeakUsbDisplayDevice> display4 = RoboPeakUsbDisplayDevice::openDevice();
         
         if (!display1) {
             fprintf(stderr, "No display1 found\n");
