@@ -31,6 +31,7 @@ dev2.set_interface_altsetting(interface = 3, alternate_setting = 0)
 dev3.set_interface_altsetting(interface = 3, alternate_setting = 0)
 dev4.set_interface_altsetting(interface = 3, alternate_setting = 0)
 
+########################## fill screen ##############################
 while(True):
 	color = random.randint(0, 65535)
 	package = struct.pack("<BH", 0x81, color)
@@ -46,9 +47,10 @@ while(True):
 	dev4.write(0x04, end)
 	
 	time.sleep(1)
-
+	
 	print("Send %d byte(s) data." %cnt1)
 	print("Send %d byte(s) data." %cnt2)
 	print("Send %d byte(s) data." %cnt3)
 	print("Send %d byte(s) data." %cnt4)
 	print("Write------->successful!\n")
+####################################################################
