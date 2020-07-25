@@ -31,26 +31,67 @@ dev2.set_interface_altsetting(interface = 3, alternate_setting = 0)
 dev3.set_interface_altsetting(interface = 3, alternate_setting = 0)
 dev4.set_interface_altsetting(interface = 3, alternate_setting = 0)
 
-########################## fill screen ##############################
-while(True):
-	color = random.randint(0, 65535)
-	package = struct.pack("<BH", 0x81, color)
-	end = struct.pack("<B", 0x81)
+displayEndpointAddr = 0x04
 
-	cnt1 = dev1.write(0x04, package)
-	dev1.write(0x04, end)
-	cnt2 = dev2.write(0x04, package)
-	dev2.write(0x04, end)
-	cnt3 = dev3.write(0x04, package)
-	dev3.write(0x04, end)
-	cnt4 = dev4.write(0x04, package)
-	dev4.write(0x04, end)
+########################## fill screen ##############################
+# fillScreen_color = random.randint(0, 65535)
+# fillScreen_color = 0xFFFF
+# fillScreen_header = 0x81
+# fillScreen_index = "<BH"
+# fillScreen_end_index = "<B"
+# fillScreen_data = [fillScreen_header, fillScreen_color]
+
+# fillScreen_package = struct.pack(fillScreen_index, *fillScreen_data)
+# fillScreen_end_package = struct.pack(fillScreen_end_index, fillScreen_header)
+
+# fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
+# dev1.write(displayEndpointAddr, fillScreen_end_package)
+# fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
+# dev2.write(displayEndpointAddr, fillScreen_end_package)
+# fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
+# dev3.write(displayEndpointAddr, fillScreen_end_package)
+# fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
+# dev4.write(displayEndpointAddr, fillScreen_end_package)
+
+# print("fillScreen. Send %d byte(s) data." %fillScreen_cnt)
+# print("Write------->successful!\n")
+######################################################################
+
+########################## rect ######################################
+left = 0
+right = 100
+printOneTime = 0
+while(True):
+	rect_header = 0x83
+	top = 0
+	bottom = 100
+	rect_color = random.randint(0, 65535)
+	operation = 0
+	rect_index = "<BHHHHHB"
+	rect_end_index = "<B"
+	rect_data = [rect_header, left, top, right, bottom, rect_color, operation]
 	
-	time.sleep(1)
+	rect_package = struct.pack(rect_index, *rect_data)
+	rect_end_package = struct.pack(rect_end_index, rect_header)
 	
-	print("Send %d byte(s) data." %cnt1)
-	print("Send %d byte(s) data." %cnt2)
-	print("Send %d byte(s) data." %cnt3)
-	print("Send %d byte(s) data." %cnt4)
-	print("Write------->successful!\n")
-####################################################################
+	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
+	dev1.write(displayEndpointAddr, rect_end_package)
+	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
+	dev2.write(displayEndpointAddr, rect_end_package)
+	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
+	dev3.write(displayEndpointAddr, rect_end_package)
+	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
+	dev4.write(displayEndpointAddr, rect_end_package)
+	time.sleep(0.05)
+	
+	left = left + 10
+	right = right + 10
+	if(left==350):
+		left = 0
+		right = 100
+	
+	if(printOneTime==0):
+		printOneTime = 1
+		print("rect. Send %d byte(s) data." %rect_cnt)
+		print("Write------->successful!\n")
+######################################################################
