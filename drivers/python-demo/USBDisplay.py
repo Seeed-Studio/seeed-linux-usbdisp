@@ -58,40 +58,68 @@ displayEndpointAddr = 0x04
 ######################################################################
 
 ########################## rect ######################################
-left = 0
-right = 100
-printOneTime = 0
-while(True):
-	rect_header = 0x83
-	top = 0
-	bottom = 100
-	rect_color = random.randint(0, 65535)
-	operation = 0
-	rect_index = "<BHHHHHB"
-	rect_end_index = "<B"
-	rect_data = [rect_header, left, top, right, bottom, rect_color, operation]
+# left = 0
+# right = 100
+# printOneTime = 0
+# while(True):
+# 	rect_header = 0x83
+# 	top = 0
+# 	bottom = 100
+# 	rect_color = random.randint(0, 65535)
+# 	operation = 0
+# 	rect_index = "<BHHHHHB"
+# 	rect_end_index = "<B"
+# 	rect_data = [rect_header, left, top, right, bottom, rect_color, operation]
 	
-	rect_package = struct.pack(rect_index, *rect_data)
-	rect_end_package = struct.pack(rect_end_index, rect_header)
+# 	rect_package = struct.pack(rect_index, *rect_data)
+# 	rect_end_package = struct.pack(rect_end_index, rect_header)
 	
-	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
-	dev1.write(displayEndpointAddr, rect_end_package)
-	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
-	dev2.write(displayEndpointAddr, rect_end_package)
-	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
-	dev3.write(displayEndpointAddr, rect_end_package)
-	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
-	dev4.write(displayEndpointAddr, rect_end_package)
-	time.sleep(0.05)
+# 	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
+# 	dev1.write(displayEndpointAddr, rect_end_package)
+# 	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
+# 	dev2.write(displayEndpointAddr, rect_end_package)
+# 	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
+# 	dev3.write(displayEndpointAddr, rect_end_package)
+# 	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
+# 	dev4.write(displayEndpointAddr, rect_end_package)
+# 	time.sleep(0.05)
 	
-	left = left + 10
-	right = right + 10
-	if(left==350):
-		left = 0
-		right = 100
+# 	left = left + 10
+# 	right = right + 10
+# 	if(left==350):
+# 		left = 0
+# 		right = 100
 	
-	if(printOneTime==0):
-		printOneTime = 1
-		print("rect. Send %d byte(s) data." %rect_cnt)
-		print("Write------->successful!\n")
+# 	if(printOneTime==0):
+# 		printOneTime = 1
+# 		print("rect. Send %d byte(s) data." %rect_cnt)
+# 		print("Write------->successful!\n")
+######################################################################
+
+############################# copyArea ###############################
+copyArea_header = 0x84
+sx = random.randint(0, 320)
+sy = random.randint(0, 240)
+dx = random.randint(0, 320)
+dy = random.randint(0, 240)
+width = 100
+height = 100
+copyArea_index = "<BHHHHHH"
+copyArea_end_index = "<B"
+copyArea_data = [copyArea_header, sx, sy, dx, dy, width, height]
+
+copyArea_package = struct.pack(copyArea_index, *copyArea_data)
+copyArea_end_package = struct.pack(copyArea_end_index, copyArea_header)
+
+copyArea_cnt = dev1.write(displayEndpointAddr, copyArea_package)
+dev1.write(displayEndpointAddr, copyArea_end_package)
+copyArea_cnt = dev2.write(displayEndpointAddr, copyArea_package)
+dev2.write(displayEndpointAddr, copyArea_end_package)
+copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
+dev3.write(displayEndpointAddr, copyArea_end_package)
+copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
+dev4.write(displayEndpointAddr, copyArea_end_package)
+
+print("copyArea. Send %d byte(s) data." %copyArea_cnt)
+print("Write------->successful!\n")
 ######################################################################
