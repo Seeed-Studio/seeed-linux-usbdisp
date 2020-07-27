@@ -51,20 +51,20 @@ def fillScreen(color):
 
 	fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
 	dev1.write(displayEndpointAddr, fillScreen_package_end)
-	time.sleep(1)
+	# time.sleep(1)
 	fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
 	dev2.write(displayEndpointAddr, fillScreen_package_end)
-	time.sleep(1)
+	# time.sleep(1)
 	fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
 	dev3.write(displayEndpointAddr, fillScreen_package_end)
-	time.sleep(1)
+	# time.sleep(1)
 	fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
 	dev4.write(displayEndpointAddr, fillScreen_package_end)
 
 	print("fillScreen. Send %d byte(s) data." %fillScreen_cnt) # 3 bytes
 	print("Write------->successful!\n")
 
-	time.sleep(1)
+	time.sleep(0.5)
 ######################################################################
 
 ########################## rect ######################################
@@ -143,87 +143,112 @@ def copyArea(sx, sy, dx, dy, width, height):
 ######################################################################
 
 ########################## bitblt ####################################
-# image = Image.open("./img_20_30.png")
-# image = image.convert("RGB")
-# image_data = []
-# width = image.width
-# height = image.height
-# for y in range(height):
-# 	for x in range(width):
-# 		pixel = image.getpixel((x, y))
-# 		#pixel = (pixel[0] + pixel[1] + pixel[2]) / 3
-# 		R = ((pixel[0] >> 3) << 11) & 0xF800
-# 		G = ((pixel[1] >> 2) << 5)  & 0x07E0
-# 		B = ( pixel[2] >> 3)        & 0x001F
-# 		RGB565_data = R | G | B
-# 		image_data.append(RGB565_data)
-# # print(type(image))
-# # print(image)
-# # print(image_data)
+def bitblt(x, y, image_path,  operation):
+	# image_path = "./img_20_30.png"
+	# image_path = "./img_30_40.jpg"
+	# image_path = "./img_160_240.png"
+	# image_path = "./img_320_240.png"
+	# image = Image.open(image_path)
+	image = Image.open(image_path)
+	image = image.convert("RGB")
+	image_data = []
+	bitblt_width = image.width
+	bitblt_height = image.height
+	# bitblt_printOneTime = 0
 
-# bitblt_start_header = 0x82
-# bitblt_subpackage_header = 0x02
-# x = 0
-# y = 0
-# while(True):
-# 	width = image.width
-# 	height = image.height
-# 	operation = 0
-# 	bitblt_index_for_parameter = "<BHHHHB"
-# 	bitblt_index_for_image = "<BHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"  # 1+31x2 = 63bytes
-# 	bitblt_index_for_image_end = "<BHHHHHHHHHHH"  # 1+11x2 = 63bytes
-# 	bitblt_index_end = "<B"
-	
-# 	bitblt_parameterData = [bitblt_start_header, x, y, width, height, operation]
-# 	# bitblt_subImageData = [bitblt_subpackage_header, subImageData]
-# 	bitblt_subImageData_end = [bitblt_subpackage_header, *image_data[589:600]]
-	
-# 	bitblt_parameterPackage    = struct.pack(bitblt_index_for_parameter, *bitblt_parameterData)
-# 	# bitblt_subImageDataPackage = struct.pack(bitblt_index_for_image, *bitblt_subImageData)
-# 	bitblt_subImageDataPackage_end = struct.pack(bitblt_index_for_image_end, *bitblt_subImageData_end)
-# 	bitblt_end_package         = struct.pack(bitblt_index_end, bitblt_start_header)
-	
-# 	dev1.write(displayEndpointAddr, bitblt_parameterPackage)
-# 	dev2.write(displayEndpointAddr, bitblt_parameterPackage)
-# 	dev3.write(displayEndpointAddr, bitblt_parameterPackage)
-# 	dev4.write(displayEndpointAddr, bitblt_parameterPackage)
-# 	for i in range(19):
-# 		bitblt_subImageData = [bitblt_subpackage_header, *image_data[i*31 : 31+i*31]]
-# 		bitblt_subImageDataPackage = struct.pack(bitblt_index_for_image, *bitblt_subImageData)
-# 		cnt = dev1.write(displayEndpointAddr, bitblt_subImageDataPackage)
-# 		dev2.write(displayEndpointAddr, bitblt_subImageDataPackage)
-# 		dev3.write(displayEndpointAddr, bitblt_subImageDataPackage)
-# 		dev4.write(displayEndpointAddr, bitblt_subImageDataPackage)
-# 	dev1.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-# 	dev1.write(displayEndpointAddr, bitblt_end_package)
-# 	dev2.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-# 	dev2.write(displayEndpointAddr, bitblt_end_package)
-# 	dev3.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-# 	dev3.write(displayEndpointAddr, bitblt_end_package)
-# 	dev4.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-# 	dev4.write(displayEndpointAddr, bitblt_end_package)
-	
-# 	time.sleep(0.2)
-	
-# 	x = x + 20
-# 	if(x==320):
-# 		x = 0
-# 		y = y+30
-# 		if(y>210):
-# 			y=0
+	# print(type(image))
+	# print(image)
+	# print(image_data)
 
-# # fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
-# # dev1.write(displayEndpointAddr, fillScreen_end_package)
-# # fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
-# # dev2.write(displayEndpointAddr, fillScreen_end_package)
-# # fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
-# # dev3.write(displayEndpointAddr, fillScreen_end_package)
-# # fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
-# # dev4.write(displayEndpointAddr, fillScreen_end_package)
+	# convert (R, G, B) -----> RGB565 (0xRGB)
+	for y_ in range(bitblt_height):
+		for x_ in range(bitblt_width):
+			pixel = image.getpixel((x_, y_))
+			# pixel = (pixel[0] + pixel[1] + pixel[2]) / 3
+			R = ((pixel[0] >> 3) << 11) & 0xF800
+			G = ((pixel[1] >> 2) << 5)  & 0x07E0
+			B = ( pixel[2] >> 3)        & 0x001F
+			RGB565_data = R | G | B
+			image_data.append(RGB565_data)
 
-# print("fillScreen. Send %d byte(s) data." %cnt)
-# print("Write------->successful!\n")
+	bitblt_start_header = 0x82
+	bitblt_subpackage_header = 0x02
+	bitblt_x = x
+	bitblt_y = y
 
+	image_size = bitblt_width * bitblt_height
+	integer_part = (int)(image_size / 31)
+	remainder_part = ((image_size) - (integer_part * 31))
+
+	# while(True):
+	bitblt_width = image.width
+	bitblt_height = image.height
+	bitblt_operation = operation
+	bitblt_index_for_parameter = "<BHHHHB"
+	bitblt_index_for_image = "<BHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"  # 1+31x2 = 63 bytes
+
+	# bitblt_index_for_image_end = "<BHHHHHHHHHHH"  # 1+11x2 = 23 bytes
+	bitblt_index_for_image_end = "<B"
+	for i in range(remainder_part):
+		bitblt_index_for_image_end = bitblt_index_for_image_end + 'H'
+
+	# if(bitblt_printOneTime==0):
+	print(bitblt_index_for_image_end)
+
+	bitblt_index_end = "<B"
+
+	bitblt_parameterData = [bitblt_start_header, bitblt_x, bitblt_y, bitblt_width, bitblt_height, bitblt_operation]
+	# bitblt_subImageData = [bitblt_subpackage_header, subImageData]
+	bitblt_subImageData_end = [bitblt_subpackage_header, *image_data[integer_part*31 : image_size]]
+
+	bitblt_parameterPackage    = struct.pack(bitblt_index_for_parameter, *bitblt_parameterData)
+	# bitblt_subImageDataPackage = struct.pack(bitblt_index_for_image, *bitblt_subImageData)
+	bitblt_subImageDataPackage_end = struct.pack(bitblt_index_for_image_end, *bitblt_subImageData_end)
+	bitblt_package_end         = struct.pack(bitblt_index_end, bitblt_start_header)
+
+	dev1.write(displayEndpointAddr, bitblt_parameterPackage)
+	dev2.write(displayEndpointAddr, bitblt_parameterPackage)
+	dev3.write(displayEndpointAddr, bitblt_parameterPackage)
+	dev4.write(displayEndpointAddr, bitblt_parameterPackage)
+
+	# if(bitblt_printOneTime==0):
+	print((int)(image_size / 31))
+	print("integer_part:",integer_part)
+	print("remainder_part:",remainder_part)
+
+
+	for i in range(integer_part):
+		bitblt_subImageData = [bitblt_subpackage_header, *image_data[i*31 : 31+i*31]]
+		bitblt_subImageDataPackage = struct.pack(bitblt_index_for_image, *bitblt_subImageData)
+		
+		bitblt_cnt = dev1.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		bitblt_cnt = dev2.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		bitblt_cnt = dev3.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		bitblt_cnt = dev4.write(displayEndpointAddr, bitblt_subImageDataPackage)
+
+	dev1.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+	dev1.write(displayEndpointAddr, bitblt_package_end)
+	dev2.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+	dev2.write(displayEndpointAddr, bitblt_package_end)
+	dev3.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+	dev3.write(displayEndpointAddr, bitblt_package_end)
+	dev4.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+	dev4.write(displayEndpointAddr, bitblt_package_end)
+
+	# time.sleep(0.4)
+
+	# bitblt_x = bitblt_x + 20
+	# if(bitblt_x == 320):
+	# 	bitblt_x = 0
+	# 	bitblt_y = bitblt_y + 30
+	# 	if(bitblt_y > 210):
+	# 		bitblt_y = 0
+
+
+	# if(bitblt_printOneTime==0):
+		# bitblt_printOneTime = 1
+	print("bitblt. Send %d byte(s) data." %bitblt_cnt) # 63 bytes
+	print("Write------->successful!\n")
 ######################################################################
 
 ########################### main() ###################################
@@ -248,10 +273,25 @@ def main():
 	# 		rect_right = 100
 	# 	time.sleep(1)
 
-	print("test copyArea function.")
-	while (True):
-		copyArea(random.randint(0, 320), random.randint(0, 240), random.randint(0, 320), random.randint(0, 240), 100, 100)
-		time.sleep(1)
+	# print("test copyArea function.")
+	# while (True):
+	# 	copyArea(random.randint(0, 320), random.randint(0, 240), random.randint(0, 320), random.randint(0, 240), 100, 100)
+	# 	time.sleep(1)
+
+	print("test bitblt function.")
+	path = "./img_20_30.png"
+	bitblt_x = 0
+	bitblt_y = 0
+	while(True):
+		bitblt(x=bitblt_x, y=bitblt_y, image_path=path,  operation=0)
+		bitblt_x = bitblt_x + 20
+		if(bitblt_x > 320):
+			bitblt_x = 0
+			bitblt_y = bitblt_y + 30
+			if(bitblt_y > 210):
+				bitblt_y = 0
+				fillScreen(0xffff)
+		# time.sleep(0.3)
 
 if __name__ == '__main__':
 	main()
