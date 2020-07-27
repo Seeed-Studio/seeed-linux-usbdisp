@@ -109,31 +109,37 @@ def rect(left, top, right, bottom, color, operation):
 ######################################################################
 
 ############################# copyArea ###############################
-# copyArea_header = 0x84
-# sx = random.randint(0, 320)
-# sy = random.randint(0, 240)
-# dx = random.randint(0, 320)
-# dy = random.randint(0, 240)
-# width = 100
-# height = 100
-# copyArea_index = "<BHHHHHH"
-# copyArea_end_index = "<B"
-# copyArea_data = [copyArea_header, sx, sy, dx, dy, width, height]
+def copyArea(sx, sy, dx, dy, width, height):
+	# copyArea_printOneTime = 0
+	copyArea_header = 0x84
+	copyArea_sx = sx
+	copyArea_sy = sy
+	copyArea_dx = dx
+	copyArea_dy = dy
+	copyArea_width = width
+	copyArea_height = height
+	copyArea_index = "<BHHHHHH"
+	copyArea_index_end = "<B"
+	copyArea_data = [copyArea_header, copyArea_sx, copyArea_sy, copyArea_dx, copyArea_dy, copyArea_width, copyArea_height]
 
-# copyArea_package = struct.pack(copyArea_index, *copyArea_data)
-# copyArea_end_package = struct.pack(copyArea_end_index, copyArea_header)
+	copyArea_package = struct.pack(copyArea_index, *copyArea_data)
+	copyArea_package_end = struct.pack(copyArea_index_end, copyArea_header)
 
-# copyArea_cnt = dev1.write(displayEndpointAddr, copyArea_package)
-# dev1.write(displayEndpointAddr, copyArea_end_package)
-# copyArea_cnt = dev2.write(displayEndpointAddr, copyArea_package)
-# dev2.write(displayEndpointAddr, copyArea_end_package)
-# copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
-# dev3.write(displayEndpointAddr, copyArea_end_package)
-# copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
-# dev4.write(displayEndpointAddr, copyArea_end_package)
+	copyArea_cnt = dev1.write(displayEndpointAddr, copyArea_package)
+	dev1.write(displayEndpointAddr, copyArea_package_end)
+	copyArea_cnt = dev2.write(displayEndpointAddr, copyArea_package)
+	dev2.write(displayEndpointAddr, copyArea_package_end)
+	copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
+	dev3.write(displayEndpointAddr, copyArea_package_end)
+	copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
+	dev4.write(displayEndpointAddr, copyArea_package_end)
 
-# print("copyArea. Send %d byte(s) data." %copyArea_cnt)
-# print("Write------->successful!\n")
+	# time.sleep(0.3)
+
+	# if(copyArea_printOneTime==0):
+	# 	copyArea_printOneTime = 1
+	print("copyArea. Send %d byte(s) data." %copyArea_cnt) # 13 bytes
+	print("Write------->successful!\n")
 ######################################################################
 
 ########################## bitblt ####################################
@@ -227,19 +233,24 @@ def main():
 	# fillScreen(random.randint(0, 65535))
 	# # time.sleep(1)
 
-	print("test rect function.")
-	rect_left = 0
-	rect_right = 100
-	rect_top = 0
-	rect_bottom = 100
-	while (True):
-		rect(rect_left, rect_top, rect_right, rect_bottom, random.randint(0, 65535), 0)
+	# print("test rect function.")
+	# rect_left = 0
+	# rect_right = 100
+	# rect_top = 0
+	# rect_bottom = 100
+	# while (True):
+	# 	rect(rect_left, rect_top, rect_right, rect_bottom, random.randint(0, 65535), 0)
 	
-		rect_left = rect_left + 10
-		rect_right = rect_right + 10
-		if(rect_left==350):
-			rect_left = 0
-			rect_right = 100
+	# 	rect_left = rect_left + 10
+	# 	rect_right = rect_right + 10
+	# 	if(rect_left==350):
+	# 		rect_left = 0
+	# 		rect_right = 100
+	# 	time.sleep(1)
+
+	print("test copyArea function.")
+	while (True):
+		copyArea(random.randint(0, 320), random.randint(0, 240), random.randint(0, 320), random.randint(0, 240), 100, 100)
 		time.sleep(1)
 
 if __name__ == '__main__':
