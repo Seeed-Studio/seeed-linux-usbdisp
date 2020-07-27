@@ -68,42 +68,44 @@ def fillScreen(color):
 ######################################################################
 
 ########################## rect ######################################
-# left = 0
-# right = 100
-# printOneTime = 0
-# while(True):
-# 	rect_header = 0x83
-# 	top = 0
-# 	bottom = 100
-# 	rect_color = random.randint(0, 65535)
-# 	operation = 0
-# 	rect_index = "<BHHHHHB"
-# 	rect_end_index = "<B"
-# 	rect_data = [rect_header, left, top, right, bottom, rect_color, operation]
-	
-# 	rect_package = struct.pack(rect_index, *rect_data)
-# 	rect_end_package = struct.pack(rect_end_index, rect_header)
-	
-# 	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
-# 	dev1.write(displayEndpointAddr, rect_end_package)
-# 	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
-# 	dev2.write(displayEndpointAddr, rect_end_package)
-# 	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
-# 	dev3.write(displayEndpointAddr, rect_end_package)
-# 	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
-# 	dev4.write(displayEndpointAddr, rect_end_package)
-# 	time.sleep(0.05)
-	
-# 	left = left + 10
-# 	right = right + 10
-# 	if(left==350):
-# 		left = 0
-# 		right = 100
-	
-# 	if(printOneTime==0):
-# 		printOneTime = 1
-# 		print("rect. Send %d byte(s) data." %rect_cnt)
-# 		print("Write------->successful!\n")
+def rect(left, top, right, bottom, color, operation):
+	rect_left = left
+	rect_right = right
+	# rect_printOneTime = 0
+	rect_header = 0x83
+	rect_top = top
+	rect_bottom = bottom
+	# rect_color = random.randint(0, 65535)
+	rect_color = color
+	rect_operation = operation
+	rect_index = "<BHHHHHB"
+	rect_index_end = "<B"
+	rect_data = [rect_header, rect_left, rect_top, rect_right, rect_bottom, rect_color, rect_operation]
+
+	rect_package = struct.pack(rect_index, *rect_data)
+	rect_package_end = struct.pack(rect_index_end, rect_header)
+
+	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
+	dev1.write(displayEndpointAddr, rect_package_end)
+	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
+	dev2.write(displayEndpointAddr, rect_package_end)
+	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
+	dev3.write(displayEndpointAddr, rect_package_end)
+	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
+	dev4.write(displayEndpointAddr, rect_package_end)
+
+	# rect_left = rect_left + 10
+	# rect_right = rect_right + 10
+	# if(rect_left==350):
+	# 	rect_left = 0
+	# 	rect_right = 100
+
+	# time.sleep(0.5)
+
+	# if(rect_printOneTime==0):
+	# 	rect_printOneTime = 1
+	print("rect. Send %d byte(s) data." %rect_cnt) # 12 bytes
+	print("Write------->successful!\n")
 ######################################################################
 
 ############################# copyArea ###############################
@@ -220,10 +222,25 @@ def fillScreen(color):
 
 ########################### main() ###################################
 def main():
-	print("test fillScreen function.")
-	# while(True):
-	fillScreen(random.randint(0, 65535))
-	# time.sleep(1)
+	# print("test fillScreen function.")
+	# # while(True):
+	# fillScreen(random.randint(0, 65535))
+	# # time.sleep(1)
+
+	print("test rect function.")
+	rect_left = 0
+	rect_right = 100
+	rect_top = 0
+	rect_bottom = 100
+	while (True):
+		rect(rect_left, rect_top, rect_right, rect_bottom, random.randint(0, 65535), 0)
+	
+		rect_left = rect_left + 10
+		rect_right = rect_right + 10
+		if(rect_left==350):
+			rect_left = 0
+			rect_right = 100
+		time.sleep(1)
 
 if __name__ == '__main__':
 	main()
