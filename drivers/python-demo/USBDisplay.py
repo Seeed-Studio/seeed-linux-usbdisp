@@ -1,3 +1,39 @@
+'''
+ * USBDisplay.py
+ * Seeed Linux USB Display demo in python
+ *
+ * A demo for Wio Terminal to multi-screen display in python.
+ *
+ * Copyright (c) 2020 seeed technology co., ltd.
+ * Author      : weihong.cai (weihong.cai@seeed.cc)
+ * Create Time : July 2020
+ * Change Log  :
+ *
+ * The MIT License (MIT)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software istm furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions
+ * of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS INcommInterface
+ * THE SOFTWARE.
+ *
+ * Get started:
+ *     1. Download the pyusb liblary use pip3:
+ *         $ pip3 install pyusb
+ *     2. Go to the python-demo path:
+ *         $ cd ~/seeed-linux-usbdisp/drivers/python-demo/
+ *     3. Run demo:
+ *         $ sudo python3 tset_pyusb.py
+'''
+
 import usb.core
 import usb.util
 import struct
@@ -5,6 +41,14 @@ import time
 import random
 
 from PIL import Image
+
+#------Please choose one of them according to the WioTerminal Demo--------#
+# NullFunctional_Demo_for_WioTerminal
+# displayEndpointAddr = 0x04
+
+# USBDisplayAndMouseControl_Demo_for_WioTerminal
+displayEndpointAddr = 0x05
+#-------------------------------------------------------------------------#
 
 # find our device
 devices = list(usb.core.find(find_all=True, idVendor=0x2886, idProduct=0x802D))
@@ -33,9 +77,14 @@ print(dev4.serial_number)
 # dev3.set_interface_altsetting(interface = 3, alternate_setting = 0)
 # dev4.set_interface_altsetting(interface = 3, alternate_setting = 0)
 
-displayEndpointAddr = 0x04
 
 ########################## fill screen ###################################################
+'''
+brief: Fill the whole screen with color
+
+color: A 16 bit color represent in B5G6R5 format
+dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+'''
 def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	# fillScreen_color = random.randint(0, 65535)
 	# fillScreen_color = 0xF800 # red
@@ -75,6 +124,17 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 ##########################################################################################
 
 ############################### rect #####################################################
+'''
+brief    : Fill a rectangle of the display with a solid color
+
+left     : The left boundry of the rectangle
+top      : The top boundry of the rectangle
+right    : The right boundry of the rectangle
+bottom   : The bottom boundry of the rectangle
+color    : A 16 bit color represent in B5G6R5 format
+operation: The pixel bit operation will be done when filling the rectangle
+dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+'''
 def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	rect_header = 0x83
 	rect_left = left
@@ -120,6 +180,17 @@ def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, 
 ##########################################################################################
 
 ############################# copyArea ###################################################
+'''
+brief : Copy a part of the existing image of the screen to another position of the display
+
+sx    : Source x coordinate
+sy    : Source y coordinate
+dx    : Destination x coordinate
+dy    : Destination y coordinate
+width : Width of the copying area
+height: Height of the copying area
+dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+'''
 def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 	# copyArea_printOneTime = 0
 	copyArea_header = 0x84
@@ -158,6 +229,15 @@ def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 ##########################################################################################
 
 ############################ bitblt ######################################################
+'''
+brief     : Draw image to the display
+
+x         : The x coordinate where the image will be painted
+y         : The y coordinate where the image will be painted
+image_path: The path of image
+operation : The pixel bit operation will be done between the original pixel and the pixel from the image
+dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+'''
 def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	# image_path = "./img_20_30.png"
 	# image = Image.open(image_path)
@@ -274,6 +354,9 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 ##########################################################################################
 
 ############################ user demo ###################################################
+'''
+brief: A demo for user.(Grow on the run)
+'''
 def userDemo():
 	print("User Demo.")
 	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
