@@ -26,12 +26,12 @@
  * THE SOFTWARE.
  *
  * Get started:
- *     1. Download the pyusb liblary use pip3:
+ *     1. Download the pyusb library use pip3:
  *         $ pip3 install pyusb
  *     2. Go to the python-demo path:
  *         $ cd ~/seeed-linux-usbdisp/drivers/python-demo/
  *     3. Run demo:
- *         $ sudo python3 tset_pyusb.py
+ *         $ sudo python3 USBDisplay.py
 '''
 
 import usb.core
