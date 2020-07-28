@@ -35,7 +35,7 @@ print(dev4.serial_number)
 
 displayEndpointAddr = 0x04
 
-########################## fill screen ##############################
+########################## fill screen ###################################################
 def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	# fillScreen_color = random.randint(0, 65535)
 	# fillScreen_color = 0xF800 # red
@@ -72,9 +72,9 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	print("Write------->successful!\n")
 
 	time.sleep(1)
-######################################################################
+##########################################################################################
 
-########################## rect ######################################
+############################### rect #####################################################
 def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	rect_header = 0x83
 	rect_left = left
@@ -117,9 +117,9 @@ def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, 
 	# 	rect_printOneTime = 1
 	print("rect. Send %d byte(s) data." %rect_cnt) # 12 bytes
 	print("Write------->successful!\n")
-######################################################################
+##########################################################################################
 
-############################# copyArea ###############################
+############################# copyArea ###################################################
 def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 	# copyArea_printOneTime = 0
 	copyArea_header = 0x84
@@ -155,9 +155,9 @@ def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 	# 	copyArea_printOneTime = 1
 	print("copyArea. Send %d byte(s) data." %copyArea_cnt) # 13 bytes
 	print("Write------->successful!\n")
-######################################################################
+##########################################################################################
 
-########################## bitblt ####################################
+############################ bitblt ######################################################
 def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	# image_path = "./img_20_30.png"
 	# image = Image.open(image_path)
@@ -271,9 +271,76 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 		# bitblt_printOneTime = 1
 	print("bitblt. Send %d byte(s) data." %bitblt_cnt) # 63 bytes
 	print("Write------->successful!\n")
-######################################################################
+##########################################################################################
 
-########################### main() ###################################
+############################ user demo ###################################################
+def userDemo():
+	print("User Demo.")
+	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	path1 = "./img_20_30.png"
+	path2 = "./img_40_60.jpg"
+	path3 = "./img_70_90.jpg"
+	path4 = "./img_90_120.jpg"
+	path5 = "./img_150_50.jpg"
+	bitblt(x=0, y=0, image_path=path5,  operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	time.sleep(0.2)
+	bitblt_x = 0
+	bitblt_y = 120
+
+	for i in range(8):
+		bitblt(x=bitblt_x, y=bitblt_y, image_path=path1,  operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		if(i>=1):
+			rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=170, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		bitblt_x = bitblt_x + 40
+		time.sleep(0.2)
+
+	rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=170, color=0xffff, operation=0, \
+		dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	bitblt_x = 0
+
+	for i in range(8):
+		bitblt(x=bitblt_x, y=bitblt_y, image_path=path2,  operation=0, \
+				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
+		if(i>=1):
+			rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
+		bitblt_x = bitblt_x + 40
+		time.sleep(0.2)
+
+	rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
+	bitblt_x = 0
+
+	for i in range(4):
+		bitblt(x=bitblt_x, y=100, image_path=path3,  operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
+		if(i>=1):
+			rect(left=bitblt_x-80, top=100, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
+		bitblt_x = bitblt_x + 80
+		time.sleep(0.1)
+
+	rect(left=bitblt_x-80, top=100, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
+	bitblt_x = 0
+
+	for i in range(3):
+		bitblt(x=bitblt_x, y=80, image_path=path4,  operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
+		if(i>=1):
+			rect(left=bitblt_x-100, top=80, right=bitblt_x, bottom=200, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
+		bitblt_x = bitblt_x + 100
+		time.sleep(0.1)
+
+	rect(left=bitblt_x-100, top=80, right=bitblt_x, bottom=200, color=0xffff, operation=0, \
+				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
+	bitblt_x = 0
+##########################################################################################
+
+########################### main() #######################################################
 def main():
 	# print("test fillScreen function.")
 	# while(True):
@@ -307,22 +374,23 @@ def main():
 	# 			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
 	# 	time.sleep(1)
 
-	print("test bitblt function.")
-	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	path = "./img_20_30.png"
-	bitblt_x = 0
-	bitblt_y = 0
-	while(True):
-		bitblt(x=bitblt_x, y=bitblt_y, image_path=path, operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-		bitblt_x = bitblt_x + 20
-		if(bitblt_x > 320):
-			bitblt_x = 0
-			bitblt_y = bitblt_y + 30
-			if(bitblt_y > 210):
-				bitblt_y = 0
-				fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-		# time.sleep(0.3)
+	# print("test bitblt function.")
+	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# path = "./img_20_30.png"
+	# bitblt_x = 0
+	# bitblt_y = 0
+	# while(True):
+	# 	bitblt(x=bitblt_x, y=bitblt_y, image_path=path, operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# 	bitblt_x = bitblt_x + 20
+	# 	if(bitblt_x > 320):
+	# 		bitblt_x = 0
+	# 		bitblt_y = bitblt_y + 30
+	# 		if(bitblt_y > 210):
+	# 			bitblt_y = 0
+	# 			fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# 	time.sleep(0.3)
+
+	userDemo()
 
 if __name__ == '__main__':
 	main()
-######################################################################
