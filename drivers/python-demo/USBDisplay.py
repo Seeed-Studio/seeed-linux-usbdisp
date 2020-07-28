@@ -158,11 +158,8 @@ def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 ######################################################################
 
 ########################## bitblt ####################################
-def bitblt(x, y, image_path,  operation):
+def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	# image_path = "./img_20_30.png"
-	# image_path = "./img_30_40.jpg"
-	# image_path = "./img_160_240.png"
-	# image_path = "./img_320_240.png"
 	# image = Image.open(image_path)
 	image = Image.open(image_path)
 	image = image.convert("RGB")
@@ -221,34 +218,45 @@ def bitblt(x, y, image_path,  operation):
 	bitblt_subImageDataPackage_end = struct.pack(bitblt_index_for_image_end, *bitblt_subImageData_end)
 	bitblt_package_end         = struct.pack(bitblt_index_end, bitblt_start_header)
 
-	dev1.write(displayEndpointAddr, bitblt_parameterPackage)
-	dev2.write(displayEndpointAddr, bitblt_parameterPackage)
-	dev3.write(displayEndpointAddr, bitblt_parameterPackage)
-	dev4.write(displayEndpointAddr, bitblt_parameterPackage)
+	if(dev1_on):
+		dev1.write(displayEndpointAddr, bitblt_parameterPackage)
+	if(dev2_on):
+		dev2.write(displayEndpointAddr, bitblt_parameterPackage)
+	if(dev3_on):
+		dev3.write(displayEndpointAddr, bitblt_parameterPackage)
+	if(dev4_on):
+		dev4.write(displayEndpointAddr, bitblt_parameterPackage)
 
 	# if(bitblt_printOneTime==0):
 	print((int)(image_size / 31))
 	print("integer_part:",integer_part)
 	print("remainder_part:",remainder_part)
 
-
 	for i in range(integer_part):
 		bitblt_subImageData = [bitblt_subpackage_header, *image_data[i*31 : 31+i*31]]
 		bitblt_subImageDataPackage = struct.pack(bitblt_index_for_image, *bitblt_subImageData)
 		
-		bitblt_cnt = dev1.write(displayEndpointAddr, bitblt_subImageDataPackage)
-		bitblt_cnt = dev2.write(displayEndpointAddr, bitblt_subImageDataPackage)
-		bitblt_cnt = dev3.write(displayEndpointAddr, bitblt_subImageDataPackage)
-		bitblt_cnt = dev4.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		if(dev1_on):
+			bitblt_cnt = dev1.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		if(dev2_on):
+			bitblt_cnt = dev2.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		if(dev3_on):
+			bitblt_cnt = dev3.write(displayEndpointAddr, bitblt_subImageDataPackage)
+		if(dev4_on):
+			bitblt_cnt = dev4.write(displayEndpointAddr, bitblt_subImageDataPackage)
 
-	dev1.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-	dev1.write(displayEndpointAddr, bitblt_package_end)
-	dev2.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-	dev2.write(displayEndpointAddr, bitblt_package_end)
-	dev3.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-	dev3.write(displayEndpointAddr, bitblt_package_end)
-	dev4.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-	dev4.write(displayEndpointAddr, bitblt_package_end)
+	if(dev1_on):
+		dev1.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+		dev1.write(displayEndpointAddr, bitblt_package_end)
+	if(dev2_on):
+		dev2.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+		dev2.write(displayEndpointAddr, bitblt_package_end)
+	if(dev3_on):
+		dev3.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+		dev3.write(displayEndpointAddr, bitblt_package_end)
+	if(dev4_on):
+		dev4.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
+		dev4.write(displayEndpointAddr, bitblt_package_end)
 
 	# time.sleep(0.4)
 
@@ -258,7 +266,6 @@ def bitblt(x, y, image_path,  operation):
 	# 	bitblt_y = bitblt_y + 30
 	# 	if(bitblt_y > 210):
 	# 		bitblt_y = 0
-
 
 	# if(bitblt_printOneTime==0):
 		# bitblt_printOneTime = 1
@@ -292,28 +299,29 @@ def main():
 	# 		rect_right = 100
 	# 	time.sleep(1)
 
-	print("test copyArea function.")
-	while (True):
-		copyArea(sx=random.randint(0, 320), sy=random.randint(0, 240), \
-				dx=random.randint(0, 320), dy=random.randint(0, 240), \
-				width=100, height=100, \
-				dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-		time.sleep(1)
+	# print("test copyArea function.")
+	# while (True):
+	# 	copyArea(sx=random.randint(0, 320), sy=random.randint(0, 240), \
+	# 			dx=random.randint(0, 320), dy=random.randint(0, 240), \
+	# 			width=100, height=100, \
+	# 			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# 	time.sleep(1)
 
-	# print("test bitblt function.")
-	# path = "./img_20_30.png"
-	# bitblt_x = 0
-	# bitblt_y = 0
-	# while(True):
-	# 	bitblt(x=bitblt_x, y=bitblt_y, image_path=path,  operation=0)
-	# 	bitblt_x = bitblt_x + 20
-	# 	if(bitblt_x > 320):
-	# 		bitblt_x = 0
-	# 		bitblt_y = bitblt_y + 30
-	# 		if(bitblt_y > 210):
-	# 			bitblt_y = 0
-	# 			fillScreen(0xffff)
-	# 	# time.sleep(0.3)
+	print("test bitblt function.")
+	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	path = "./img_20_30.png"
+	bitblt_x = 0
+	bitblt_y = 0
+	while(True):
+		bitblt(x=bitblt_x, y=bitblt_y, image_path=path, operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		bitblt_x = bitblt_x + 20
+		if(bitblt_x > 320):
+			bitblt_x = 0
+			bitblt_y = bitblt_y + 30
+			if(bitblt_y > 210):
+				bitblt_y = 0
+				fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		# time.sleep(0.3)
 
 if __name__ == '__main__':
 	main()
