@@ -120,7 +120,7 @@ def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, 
 ######################################################################
 
 ############################# copyArea ###############################
-def copyArea(sx, sy, dx, dy, width, height):
+def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 	# copyArea_printOneTime = 0
 	copyArea_header = 0x84
 	copyArea_sx = sx
@@ -136,14 +136,18 @@ def copyArea(sx, sy, dx, dy, width, height):
 	copyArea_package = struct.pack(copyArea_index, *copyArea_data)
 	copyArea_package_end = struct.pack(copyArea_index_end, copyArea_header)
 
-	copyArea_cnt = dev1.write(displayEndpointAddr, copyArea_package)
-	dev1.write(displayEndpointAddr, copyArea_package_end)
-	copyArea_cnt = dev2.write(displayEndpointAddr, copyArea_package)
-	dev2.write(displayEndpointAddr, copyArea_package_end)
-	copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
-	dev3.write(displayEndpointAddr, copyArea_package_end)
-	copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
-	dev4.write(displayEndpointAddr, copyArea_package_end)
+	if(dev1_on):
+		copyArea_cnt = dev1.write(displayEndpointAddr, copyArea_package)
+		dev1.write(displayEndpointAddr, copyArea_package_end)
+	if(dev2_on):
+		copyArea_cnt = dev2.write(displayEndpointAddr, copyArea_package)
+		dev2.write(displayEndpointAddr, copyArea_package_end)
+	if(dev3_on):
+		copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
+		dev3.write(displayEndpointAddr, copyArea_package_end)
+	if(dev4_on):
+		copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
+		dev4.write(displayEndpointAddr, copyArea_package_end)
 
 	# time.sleep(0.3)
 
@@ -271,27 +275,30 @@ def main():
 	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
 	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
 
-	print("test rect function.")
-	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	rect_left = 0
-	rect_top = 0
-	rect_right = 100
-	rect_bottom = 100
-	while (True):
-		rect(left=rect_left, top=rect_top, right=rect_right, bottom=rect_bottom, \
-			color=random.randint(0, 65535), operation=0, \
-			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-		rect_left = rect_left + 10
-		rect_right = rect_right + 10
-		if(rect_left==350):
-			rect_left = 0
-			rect_right = 100
-		time.sleep(1)
-
-	# print("test copyArea function.")
+	# print("test rect function.")
+	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# rect_left = 0
+	# rect_top = 0
+	# rect_right = 100
+	# rect_bottom = 100
 	# while (True):
-	# 	copyArea(random.randint(0, 320), random.randint(0, 240), random.randint(0, 320), random.randint(0, 240), 100, 100)
+	# 	rect(left=rect_left, top=rect_top, right=rect_right, bottom=rect_bottom, \
+	# 		color=random.randint(0, 65535), operation=0, \
+	# 		dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# 	rect_left = rect_left + 10
+	# 	rect_right = rect_right + 10
+	# 	if(rect_left==350):
+	# 		rect_left = 0
+	# 		rect_right = 100
 	# 	time.sleep(1)
+
+	print("test copyArea function.")
+	while (True):
+		copyArea(sx=random.randint(0, 320), sy=random.randint(0, 240), \
+				dx=random.randint(0, 320), dy=random.randint(0, 240), \
+				width=100, height=100, \
+				dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		time.sleep(1)
 
 	# print("test bitblt function.")
 	# path = "./img_20_30.png"
