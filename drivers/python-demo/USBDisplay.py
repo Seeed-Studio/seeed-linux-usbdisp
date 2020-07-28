@@ -36,7 +36,7 @@ print(dev4.serial_number)
 displayEndpointAddr = 0x04
 
 ########################## fill screen ##############################
-def fillScreen(color):
+def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	# fillScreen_color = random.randint(0, 65535)
 	# fillScreen_color = 0xF800 # red
 	# fillScreen_color = 0xFFFF # white
@@ -49,22 +49,26 @@ def fillScreen(color):
 	fillScreen_package = struct.pack(fillScreen_index, *fillScreen_data)
 	fillScreen_package_end = struct.pack(fillScreen_index_end, fillScreen_header)
 
-	fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
-	dev1.write(displayEndpointAddr, fillScreen_package_end)
+	if(dev1_on):
+		fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
+		dev1.write(displayEndpointAddr, fillScreen_package_end)
 	# time.sleep(1)
-	fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
-	dev2.write(displayEndpointAddr, fillScreen_package_end)
+	if(dev2_on):
+		fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
+		dev2.write(displayEndpointAddr, fillScreen_package_end)
 	# time.sleep(1)
-	fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
-	dev3.write(displayEndpointAddr, fillScreen_package_end)
+	if(dev3_on):
+		fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
+		dev3.write(displayEndpointAddr, fillScreen_package_end)
 	# time.sleep(1)
-	fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
-	dev4.write(displayEndpointAddr, fillScreen_package_end)
+	if(dev4_on):
+		fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
+		dev4.write(displayEndpointAddr, fillScreen_package_end)
 
 	print("fillScreen. Send %d byte(s) data." %fillScreen_cnt) # 3 bytes
 	print("Write------->successful!\n")
 
-	time.sleep(0.5)
+	time.sleep(1)
 ######################################################################
 
 ########################## rect ######################################
@@ -253,10 +257,12 @@ def bitblt(x, y, image_path,  operation):
 
 ########################### main() ###################################
 def main():
-	# print("test fillScreen function.")
-	# # while(True):
-	# fillScreen(random.randint(0, 65535))
-	# # time.sleep(1)
+	print("test fillScreen function.")
+	while(True):
+		fillScreen(color=random.randint(0, 65535), dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
+		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
+		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
 
 	# print("test rect function.")
 	# rect_left = 0
@@ -278,20 +284,20 @@ def main():
 	# 	copyArea(random.randint(0, 320), random.randint(0, 240), random.randint(0, 320), random.randint(0, 240), 100, 100)
 	# 	time.sleep(1)
 
-	print("test bitblt function.")
-	path = "./img_20_30.png"
-	bitblt_x = 0
-	bitblt_y = 0
-	while(True):
-		bitblt(x=bitblt_x, y=bitblt_y, image_path=path,  operation=0)
-		bitblt_x = bitblt_x + 20
-		if(bitblt_x > 320):
-			bitblt_x = 0
-			bitblt_y = bitblt_y + 30
-			if(bitblt_y > 210):
-				bitblt_y = 0
-				fillScreen(0xffff)
-		# time.sleep(0.3)
+	# print("test bitblt function.")
+	# path = "./img_20_30.png"
+	# bitblt_x = 0
+	# bitblt_y = 0
+	# while(True):
+	# 	bitblt(x=bitblt_x, y=bitblt_y, image_path=path,  operation=0)
+	# 	bitblt_x = bitblt_x + 20
+	# 	if(bitblt_x > 320):
+	# 		bitblt_x = 0
+	# 		bitblt_y = bitblt_y + 30
+	# 		if(bitblt_y > 210):
+	# 			bitblt_y = 0
+	# 			fillScreen(0xffff)
+	# 	# time.sleep(0.3)
 
 if __name__ == '__main__':
 	main()
