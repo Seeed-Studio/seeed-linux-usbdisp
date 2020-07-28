@@ -40,6 +40,7 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	# fillScreen_color = random.randint(0, 65535)
 	# fillScreen_color = 0xF800 # red
 	# fillScreen_color = 0xFFFF # white
+	# fillScreen_printOneTime = 0
 	fillScreen_color = color
 	fillScreen_header = 0x81
 	fillScreen_index = "<BH"
@@ -65,6 +66,8 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 		fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
 		dev4.write(displayEndpointAddr, fillScreen_package_end)
 
+	# if(fillScreen_printOneTime==0)
+	# 	fillScreen_printOneTime=1
 	print("fillScreen. Send %d byte(s) data." %fillScreen_cnt) # 3 bytes
 	print("Write------->successful!\n")
 
@@ -72,13 +75,13 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 ######################################################################
 
 ########################## rect ######################################
-def rect(left, top, right, bottom, color, operation):
-	rect_left = left
-	rect_right = right
-	# rect_printOneTime = 0
+def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	rect_header = 0x83
+	rect_left = left
 	rect_top = top
+	rect_right = right
 	rect_bottom = bottom
+	# rect_printOneTime = 0
 	# rect_color = random.randint(0, 65535)
 	rect_color = color
 	rect_operation = operation
@@ -89,14 +92,18 @@ def rect(left, top, right, bottom, color, operation):
 	rect_package = struct.pack(rect_index, *rect_data)
 	rect_package_end = struct.pack(rect_index_end, rect_header)
 
-	rect_cnt = dev1.write(displayEndpointAddr, rect_package)
-	dev1.write(displayEndpointAddr, rect_package_end)
-	rect_cnt = dev2.write(displayEndpointAddr, rect_package)
-	dev2.write(displayEndpointAddr, rect_package_end)
-	rect_cnt = dev3.write(displayEndpointAddr, rect_package)
-	dev3.write(displayEndpointAddr, rect_package_end)
-	rect_cnt = dev4.write(displayEndpointAddr, rect_package)
-	dev4.write(displayEndpointAddr, rect_package_end)
+	if(dev1_on):
+		rect_cnt = dev1.write(displayEndpointAddr, rect_package)
+		dev1.write(displayEndpointAddr, rect_package_end)
+	if(dev2_on):
+		rect_cnt = dev2.write(displayEndpointAddr, rect_package)
+		dev2.write(displayEndpointAddr, rect_package_end)
+	if(dev3_on):
+		rect_cnt = dev3.write(displayEndpointAddr, rect_package)
+		dev3.write(displayEndpointAddr, rect_package_end)
+	if(dev4_on):
+		rect_cnt = dev4.write(displayEndpointAddr, rect_package)
+		dev4.write(displayEndpointAddr, rect_package_end)
 
 	# rect_left = rect_left + 10
 	# rect_right = rect_right + 10
@@ -257,27 +264,29 @@ def bitblt(x, y, image_path,  operation):
 
 ########################### main() ###################################
 def main():
-	print("test fillScreen function.")
-	while(True):
-		fillScreen(color=random.randint(0, 65535), dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
-		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
-		fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
+	# print("test fillScreen function.")
+	# while(True):
+	# 	fillScreen(color=random.randint(0, 65535), dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
+	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
+	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
 
-	# print("test rect function.")
-	# rect_left = 0
-	# rect_right = 100
-	# rect_top = 0
-	# rect_bottom = 100
-	# while (True):
-	# 	rect(rect_left, rect_top, rect_right, rect_bottom, random.randint(0, 65535), 0)
-	
-	# 	rect_left = rect_left + 10
-	# 	rect_right = rect_right + 10
-	# 	if(rect_left==350):
-	# 		rect_left = 0
-	# 		rect_right = 100
-	# 	time.sleep(1)
+	print("test rect function.")
+	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	rect_left = 0
+	rect_top = 0
+	rect_right = 100
+	rect_bottom = 100
+	while (True):
+		rect(left=rect_left, top=rect_top, right=rect_right, bottom=rect_bottom, \
+			color=random.randint(0, 65535), operation=0, \
+			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		rect_left = rect_left + 10
+		rect_right = rect_right + 10
+		if(rect_left==350):
+			rect_left = 0
+			rect_right = 100
+		time.sleep(1)
 
 	# print("test copyArea function.")
 	# while (True):
