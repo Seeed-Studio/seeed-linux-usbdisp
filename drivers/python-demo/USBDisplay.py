@@ -443,6 +443,59 @@ class Bullet():
 		rect(left=self.x-self.speed, top=self.y, right=self.x-self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
 			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
 		time.sleep(0.002)
+
+class Player():
+	def __init__(self, plane_img, x, y):
+		self.image = plane_img
+		self.x = x
+		self.y = y
+		self.width = 50
+		self.height = 70
+		self.speed_x = 50
+		self.speed_y = 80
+		self.is_hit = False
+		
+		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+
+	# def shoot(self, bullet_img):
+	# 	bullet = Bullet(bullet_img, self.rect.midtop)
+	# 	self.bullets.add(bullet)
+
+	def shoot(self, bullet_img):
+		# b = Bullet(bullet_img, self.x+self.width, self.y+self.height/2)
+		return Bullet(bullet_img, self.x+self.width, (int)(self.y+self.height/2))
+		# b.move()
+		# bitblt(x=self.x, y=self.y, image_path=bullet_img, operation=0, \
+		# 	dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+
+	def moveUp(self):
+		self.x = 0
+
+	def moveDown(self):
+		self.x = 0
+
+	def moveLeft(self):
+		if(self.y == 5):
+			self.y = 5
+		else:
+			self.y = self.y - self.speed_y
+			bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			rect(left=self.x, top=self.y+self.speed_y, right=self.x+self.width, bottom=self.y+self.speed_y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			time.sleep(0.002)
+
+	def moveRight(self):
+		if(self.y == 165):
+			self.y = 168
+		else:
+			self.y = self.y + self.speed_y
+			bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			rect(left=self.x, top=self.y-self.speed_y, right=self.x+self.width, bottom=self.y-self.speed_y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			time.sleep(0.002)
 ##########################################################################################
 
 ########################### main() #######################################################
