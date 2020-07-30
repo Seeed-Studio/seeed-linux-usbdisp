@@ -496,6 +496,26 @@ class Player():
 			rect(left=self.x, top=self.y-self.speed_y, right=self.x+self.width, bottom=self.y-self.speed_y+self.height, color=0xffff, operation=0, \
 				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
 			time.sleep(0.002)
+
+class Enemy():
+	def __init__(self, enemy_img, x, y):
+		self.image = enemy_img
+		self.x = x
+		self.y = y
+		self.width = 40
+		self.height = 50
+		self.speed = 50
+
+		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+
+	def move(self):
+		self.x = self.x - self.speed
+		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		rect(left=self.x+self.speed, top=self.y, right=self.x+self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
+			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		time.sleep(0.002)
 ##########################################################################################
 
 ########################### main() #######################################################
