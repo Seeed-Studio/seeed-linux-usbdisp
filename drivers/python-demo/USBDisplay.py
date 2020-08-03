@@ -577,22 +577,38 @@ def main():
 	enemy_path = "./img_40_50.jpg"
 	gameOver_path = "./img_100_240.jpg"
 	
-	plane_y = 85
-	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# time.sleep(1)
+	# plane_y = 85
+	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # time.sleep(1)
 
-	plane_y = plane_y - 80
-	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# time.sleep(1)
+	# plane_y = plane_y - 80
+	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # time.sleep(1)
 
-	plane_y = plane_y + 160
-	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# time.sleep(1)
+	# plane_y = plane_y + 160
+	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # time.sleep(1)
 
-	time.sleep(1)
+	# time.sleep(1)
 	player = Player(plane_path, 0, 85)
 
-	
+	bullet1 = player.shoot(bullet_path)
+	bullet1.move()
+	player.moveLeft()
+	bullet2 = player.shoot(bullet_path)
+	bullet1.move()
+	bullet2.move()
+	player.moveLeft()
+	bullet1.move()
+	bullet2.move()
+	player.moveRight()
+	bullet1.move()
+	bullet2.move()
+	player.moveRight()
+	bullet1.move()
+	bullet2.move()
+	player.moveLeft()
+	# bullet1.move()
 
 if __name__ == '__main__':
 	main()
