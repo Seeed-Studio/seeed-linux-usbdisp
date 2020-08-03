@@ -568,7 +568,31 @@ def main():
 	# 			fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
 	# 	time.sleep(0.3)
 
-	userDemo()
+	# userDemo()
+
+##-----------------------------AircraftBattleGame Demo test---------------------------------------------------------
+	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	plane_path = "./img_50_70.jpg"
+	bullet_path = "./img_10_10.png"
+	enemy_path = "./img_40_50.jpg"
+	gameOver_path = "./img_100_240.jpg"
+	
+	plane_y = 85
+	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# time.sleep(1)
+
+	plane_y = plane_y - 80
+	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# time.sleep(1)
+
+	plane_y = plane_y + 160
+	bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# time.sleep(1)
+
+	time.sleep(1)
+	player = Player(plane_path, 0, 85)
+
+	
 
 if __name__ == '__main__':
 	main()
