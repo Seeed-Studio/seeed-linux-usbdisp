@@ -1,12 +1,9 @@
 '''
- * USBDisplay.py
- * Seeed Linux USB Display demo in python
- *
- * A demo for Wio Terminal to multi-screen display in python.
+ * USBDisplayGame.py
  *
  * Copyright (c) 2020 seeed technology co., ltd.
  * Author      : weihong.cai (weihong.cai@seeed.cc)
- * Create Time : July 2020
+ * Create Time : Aug 2020
  * Change Log  :
  *
  * The MIT License (MIT)
@@ -31,7 +28,7 @@
  *     2. Go to the python-demo path:
  *         $ cd ~/seeed-linux-usbdisp/drivers/python-demo/
  *     3. Run demo:
- *         $ sudo python3 USBDisplay.py
+ *         $ sudo python3 USBDisplayGame.py
 '''
 
 import usb.core
@@ -54,31 +51,29 @@ displayEndpointAddr = 0x05
 
 # find our device
 devices = list(usb.core.find(find_all=True, idVendor=0x2886, idProduct=0x802D))
+
+# for dev in devices:
+# 	print(dev.serial_number)
+
+# print(type(devices))
 dev1 = devices[0]
 dev2 = devices[1]
 dev3 = devices[2]
-dev4 = devices[3]
+
+# print("\n")
+print("dev1:", dev1.serial_number)
+print("dev2:", dev2.serial_number)
+print("dev3:", dev3.serial_number)
+
+# # was it found?
+# if dev is None:
+#     raise ValueError('Device not found')
 if dev1 is None:
-	raise ValueError('Device not found')
+    raise ValueError('Device not found')
 if dev2 is None:
-	raise ValueError('Device not found')
+    raise ValueError('Device not found')
 if dev3 is None:
-	raise ValueError('Device not found')
-if dev4 is None:
-	raise ValueError('Device not found')
-
-# print device serial_number
-print(dev1.serial_number)
-print(dev2.serial_number)
-print(dev3.serial_number)
-print(dev4.serial_number)
-
-# set interface altsetting
-# dev1.set_interface_altsetting(interface = 3, alternate_setting = 0)
-# dev2.set_interface_altsetting(interface = 3, alternate_setting = 0)
-# dev3.set_interface_altsetting(interface = 3, alternate_setting = 0)
-# dev4.set_interface_altsetting(interface = 3, alternate_setting = 0)
-
+    raise ValueError('Device not found')
 
 ########################## fill screen ###################################################
 '''
@@ -87,7 +82,7 @@ brief: Fill the whole screen with color
 color: A 16 bit color represent in B5G6R5 format
 dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
 '''
-def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
+def fillScreen(color, dev1_on, dev2_on, dev3_on):
 	# fillScreen_color = random.randint(0, 65535)
 	# fillScreen_color = 0xF800 # red
 	# fillScreen_color = 0xFFFF # white
@@ -104,18 +99,14 @@ def fillScreen(color, dev1_on, dev2_on, dev3_on, dev4_on):
 	if(dev1_on):
 		fillScreen_cnt = dev1.write(displayEndpointAddr, fillScreen_package)
 		dev1.write(displayEndpointAddr, fillScreen_package_end)
-	# time.sleep(1)
+	time.sleep(1)
 	if(dev2_on):
 		fillScreen_cnt = dev2.write(displayEndpointAddr, fillScreen_package)
 		dev2.write(displayEndpointAddr, fillScreen_package_end)
-	# time.sleep(1)
+	time.sleep(1)
 	if(dev3_on):
 		fillScreen_cnt = dev3.write(displayEndpointAddr, fillScreen_package)
 		dev3.write(displayEndpointAddr, fillScreen_package_end)
-	# time.sleep(1)
-	if(dev4_on):
-		fillScreen_cnt = dev4.write(displayEndpointAddr, fillScreen_package)
-		dev4.write(displayEndpointAddr, fillScreen_package_end)
 
 	# if(fillScreen_printOneTime==0)
 	# 	fillScreen_printOneTime=1
@@ -137,7 +128,7 @@ color    : A 16 bit color represent in B5G6R5 format
 operation: The pixel bit operation will be done when filling the rectangle
 dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
 '''
-def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, dev4_on):
+def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on):
 	rect_header = 0x83
 	rect_left = left
 	rect_top = top
@@ -163,9 +154,6 @@ def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on, 
 	if(dev3_on):
 		rect_cnt = dev3.write(displayEndpointAddr, rect_package)
 		dev3.write(displayEndpointAddr, rect_package_end)
-	if(dev4_on):
-		rect_cnt = dev4.write(displayEndpointAddr, rect_package)
-		dev4.write(displayEndpointAddr, rect_package_end)
 
 	# rect_left = rect_left + 10
 	# rect_right = rect_right + 10
@@ -193,7 +181,7 @@ width : Width of the copying area
 height: Height of the copying area
 dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
 '''
-def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
+def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on):
 	# copyArea_printOneTime = 0
 	copyArea_header = 0x84
 	copyArea_sx = sx
@@ -218,9 +206,6 @@ def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on, dev4_on):
 	if(dev3_on):
 		copyArea_cnt = dev3.write(displayEndpointAddr, copyArea_package)
 		dev3.write(displayEndpointAddr, copyArea_package_end)
-	if(dev4_on):
-		copyArea_cnt = dev4.write(displayEndpointAddr, copyArea_package)
-		dev4.write(displayEndpointAddr, copyArea_package_end)
 
 	# time.sleep(0.3)
 
@@ -240,7 +225,7 @@ image_path: The path of image
 operation : The pixel bit operation will be done between the original pixel and the pixel from the image
 dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
 '''
-def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
+def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on):
 	# image_path = "./img_20_30.png"
 	# image = Image.open(image_path)
 	image = Image.open(image_path)
@@ -306,8 +291,6 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 		dev2.write(displayEndpointAddr, bitblt_parameterPackage)
 	if(dev3_on):
 		dev3.write(displayEndpointAddr, bitblt_parameterPackage)
-	if(dev4_on):
-		dev4.write(displayEndpointAddr, bitblt_parameterPackage)
 
 	# if(bitblt_printOneTime==0):
 	print((int)(image_size / 31))
@@ -324,8 +307,6 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 			bitblt_cnt = dev2.write(displayEndpointAddr, bitblt_subImageDataPackage)
 		if(dev3_on):
 			bitblt_cnt = dev3.write(displayEndpointAddr, bitblt_subImageDataPackage)
-		if(dev4_on):
-			bitblt_cnt = dev4.write(displayEndpointAddr, bitblt_subImageDataPackage)
 
 	if(dev1_on):
 		dev1.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
@@ -336,9 +317,6 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	if(dev3_on):
 		dev3.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
 		dev3.write(displayEndpointAddr, bitblt_package_end)
-	if(dev4_on):
-		dev4.write(displayEndpointAddr, bitblt_subImageDataPackage_end)
-		dev4.write(displayEndpointAddr, bitblt_package_end)
 
 	# time.sleep(0.4)
 
@@ -355,96 +333,37 @@ def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
 	print("Write------->successful!\n")
 ##########################################################################################
 
-############################ user demo ###################################################
-'''
-brief: A demo for user.(Grow on the run)
-'''
-def userDemo():
-	print("User Demo.")
-	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	path1 = "./img_20_30.png"
-	path2 = "./img_40_60.jpg"
-	path3 = "./img_70_90.jpg"
-	path4 = "./img_90_120.jpg"
-	path5 = "./img_150_50.jpg"
-	bitblt(x=0, y=0, image_path=path5,  operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	time.sleep(0.2)
-	bitblt_x = 0
-	bitblt_y = 120
-
-	for i in range(8):
-		bitblt(x=bitblt_x, y=bitblt_y, image_path=path1,  operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		if(i>=1):
-			rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=170, color=0xffff, operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		bitblt_x = bitblt_x + 40
-		time.sleep(0.2)
-
-	rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=170, color=0xffff, operation=0, \
-		dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	bitblt_x = 0
-
-	for i in range(8):
-		bitblt(x=bitblt_x, y=bitblt_y, image_path=path2,  operation=0, \
-				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
-		if(i>=1):
-			rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
-		bitblt_x = bitblt_x + 40
-		time.sleep(0.2)
-
-	rect(left=bitblt_x-40, top=120, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
-	bitblt_x = 0
-
-	for i in range(4):
-		bitblt(x=bitblt_x, y=100, image_path=path3,  operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
-		if(i>=1):
-			rect(left=bitblt_x-80, top=100, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
-		bitblt_x = bitblt_x + 80
-		time.sleep(0.1)
-
-	rect(left=bitblt_x-80, top=100, right=bitblt_x, bottom=190, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
-	bitblt_x = 0
-
-	for i in range(3):
-		bitblt(x=bitblt_x, y=80, image_path=path4,  operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
-		if(i>=1):
-			rect(left=bitblt_x-100, top=80, right=bitblt_x, bottom=200, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
-		bitblt_x = bitblt_x + 100
-		time.sleep(0.1)
-
-	rect(left=bitblt_x-100, top=80, right=bitblt_x, bottom=200, color=0xffff, operation=0, \
-				dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
-	bitblt_x = 0
-##########################################################################################
-
 ############################ class #######################################################
 class Bullet():
 	def __init__(self, bullet_img, x, y):
 		self.image = bullet_img
-		self.speed = 50
+		self.speed = 20
 		self.width = 10
 		self.height = 10
 		self.x = x
 		self.y = y-(int)(self.height/2)
+		self.is_hit = False
 
 		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			dev1_on=True, dev2_on=False, dev3_on=False)
 
 	def move(self):
+		# self.x = self.x + self.speed
+		# bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+		# 	dev1_on=True, dev2_on=False, dev3_on=False)
+		# # rect(left=self.x-self.speed, top=self.y, right=self.x-self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
+		# # 	dev1_on=True, dev2_on=False, dev3_on=False)
+		# time.sleep(0.002)
+
 		self.x = self.x + self.speed
 		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		rect(left=self.x-self.speed, top=self.y, right=self.x-self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		time.sleep(0.002)
+			dev1_on=True, dev2_on=False, dev3_on=False)
+		if(self.speed >= self.width):
+			rect(left=self.x-self.speed, top=self.y, right=self.x-self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False)
+		else:
+			rect(left=self.x-self.speed, top=self.y, right=self.x, bottom=self.y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False)
 
 class Player():
 	def __init__(self, plane_img, x, y):
@@ -458,7 +377,7 @@ class Player():
 		self.is_hit = False
 		
 		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			dev1_on=True, dev2_on=False, dev3_on=False)
 
 	# def shoot(self, bullet_img):
 	# 	bullet = Bullet(bullet_img, self.rect.midtop)
@@ -482,22 +401,28 @@ class Player():
 			self.y = 5
 		else:
 			self.y = self.y - self.speed_y
-			bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-			rect(left=self.x, top=self.y+self.speed_y, right=self.x+self.width, bottom=self.y+self.speed_y+self.height, color=0xffff, operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-			time.sleep(0.002)
+			if(self.y<=0):
+				self.y = self.y + self.speed_y
+			else:
+				bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				rect(left=self.x, top=self.y+self.speed_y, right=self.x+self.width, bottom=self.y+self.speed_y+self.height, color=0xffff, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				time.sleep(0.002)
 
 	def moveRight(self):
 		if(self.y == 165):
 			self.y = 168
 		else:
 			self.y = self.y + self.speed_y
-			bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-			rect(left=self.x, top=self.y-self.speed_y, right=self.x+self.width, bottom=self.y-self.speed_y+self.height, color=0xffff, operation=0, \
-				dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-			time.sleep(0.002)
+			if(self.y>=240):
+				self.y = self.y - self.speed_y
+			else:
+				bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				rect(left=self.x, top=self.y-self.speed_y, right=self.x+self.width, bottom=self.y-self.speed_y+self.height, color=0xffff, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				time.sleep(0.002)
 
 class Enemy():
 	def __init__(self, enemy_img, x, y):
@@ -506,71 +431,136 @@ class Enemy():
 		self.y = y
 		self.width = 40
 		self.height = 50
-		self.speed = 50
+		self.speed = 8
+		self.is_hit = False
 
 		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+			dev1_on=True, dev2_on=False, dev3_on=False)
 
 	def move(self):
 		self.x = self.x - self.speed
-		bitblt(x=self.x, y=self.y, image_path=self.image, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-		rect(left=self.x+self.speed, top=self.y, right=self.x+self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
-			dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+		if(self.x<=0):
+			self.x = 0
+		bitblt(x=self.x, y=self.y, image_path=self.image, operation=2, \
+			dev1_on=True, dev2_on=False, dev3_on=False)
+		if(self.speed >= self.width):
+			rect(left=self.x+self.speed, top=self.y, right=self.x+self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False)
+		else:
+			rect(left=self.x+self.width, top=self.y, right=self.x+self.speed+self.width, bottom=self.y+self.height, color=0xffff, operation=0, \
+				dev1_on=True, dev2_on=False, dev3_on=False)
 		time.sleep(0.002)
 ##########################################################################################
 
 ########################### main() #######################################################
 def main():
-	# print("test fillScreen function.")
-	# while(True):
-	# 	fillScreen(color=random.randint(0, 65535), dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=True, dev3_on=False, dev4_on=False)
-	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=True, dev4_on=False)
-	# 	fillScreen(color=random.randint(0, 65535), dev1_on=False, dev2_on=False, dev3_on=False, dev4_on=True)
+	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True)
+	plane_path = "./img_50_70.jpg"
+	bullet_path = "./img_10_10.png"
+	enemy_path = "./img_40_50.jpg"
+	gameOver_path = "./img_100_240.jpg"
 
-	# print("test rect function.")
-	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# rect_left = 0
-	# rect_top = 0
-	# rect_right = 100
-	# rect_bottom = 100
-	# while (True):
-	# 	rect(left=rect_left, top=rect_top, right=rect_right, bottom=rect_bottom, \
-	# 		color=random.randint(0, 65535), operation=0, \
-	# 		dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# 	rect_left = rect_left + 10
-	# 	rect_right = rect_right + 10
-	# 	if(rect_left==350):
-	# 		rect_left = 0
-	# 		rect_right = 100
-	# 	time.sleep(1)
+	buttonLeft_pin  = 22
+	buttonRight_pin = 24
+	buttonShoot_pin = 12
+	
+	# GPIO.setmode(GPIO.BOARD)
+	GPIO.setmode(GPIO.BCM)
 
-	# print("test copyArea function.")
-	# while (True):
-	# 	copyArea(sx=random.randint(0, 320), sy=random.randint(0, 240), \
-	# 			dx=random.randint(0, 320), dy=random.randint(0, 240), \
-	# 			width=100, height=100, \
-	# 			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# 	time.sleep(1)
+	GPIO.setup(buttonLeft_pin,  GPIO.IN)
+	GPIO.setup(buttonRight_pin, GPIO.IN)
+	GPIO.setup(buttonShoot_pin, GPIO.IN)
 
-	# print("test bitblt function.")
-	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# path = "./img_20_30.png"
-	# bitblt_x = 0
-	# bitblt_y = 0
-	# while(True):
-	# 	bitblt(x=bitblt_x, y=bitblt_y, image_path=path, operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# 	bitblt_x = bitblt_x + 20
-	# 	if(bitblt_x > 320):
-	# 		bitblt_x = 0
-	# 		bitblt_y = bitblt_y + 30
-	# 		if(bitblt_y > 210):
-	# 			bitblt_y = 0
-	# 			fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# 	time.sleep(0.3)
+	player = Player(plane_path, 0, 85)
+	bullets = []
+	bullets_temp = []
+	enemies = []
+	enemies_temp = []
+	# enemy = Enemy(enemy_path, 280, random.choice([15,95,175]))
 
-	userDemo()
+	previousTime = time.time()
+	while(True):
+		currentTime = time.time()
+		timeDifference = (int)(currentTime - previousTime)
+
+		buttonLeft_state  = GPIO.input(buttonLeft_pin)
+		buttonRight_state = GPIO.input(buttonRight_pin)
+		buttonShoot_state = GPIO.input(buttonShoot_pin)
+
+		if(buttonLeft_state==GPIO.HIGH):
+			player.moveLeft()
+		if(buttonRight_state==GPIO.HIGH):
+			player.moveRight()
+		if(buttonShoot_state==GPIO.HIGH):
+			bullets.append(player.shoot(bullet_path))
+
+		if(timeDifference != 0):
+			if(timeDifference % 5 == 0):
+				previousTime = time.time()
+				enemies.append(Enemy(enemy_path, 280, random.choice([15,95,175])))
+
+		for e in enemies:
+			enemy_y = e.y + e.height/2
+			player_y = player.y + player.height/2
+
+			if(enemy_y==player_y):
+				if(e.x<=player.width):
+					player.is_hit = True
+					break
+			elif(e.x<=0):
+				# bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+				# 		dev1_on=True, dev2_on=True, dev3_on=True)
+				player.is_hit = True
+				break
+
+			for b in bullets:
+				bullet_y = b.y + b.height/2
+				if(enemy_y==bullet_y):
+					if(b.x>=320):
+						b.is_hit = True
+					if(b.x>=e.x):
+						e.is_hit = True
+						b.is_hit = True
+				else:
+					if(b.x>=320):
+						b.is_hit = True
+
+		bullets_temp = bullets
+		index1 = 0
+		for b in bullets:
+			if not b.is_hit:
+				b.move()
+			else:
+				bullets_temp.pop(index1)
+				if(index1==0):
+					index1 = 0
+				else:
+					index1 = index1 - 1
+			index1 = index1 + 1
+		bullets = bullets_temp
+
+		enemies_temp = enemies
+		index2 = 0
+		for e in enemies:
+			if not e.is_hit:
+				e.move()
+			else:
+				rect(left=e.x, top=e.y, right=e.x+e.width, bottom=e.y+e.height, color=0xffff, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				enemies_temp.pop(index2)
+				if(index2==0):
+					index2 = 0
+				else:
+					index2 = index2 - 1
+			index2 = index2 + 1
+		enemies = enemies_temp
+
+		# time.sleep(1)
+
+		if(player.is_hit == True):
+			bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+						dev1_on=True, dev2_on=True, dev3_on=True)
+			break
 
 if __name__ == '__main__':
 	main()
