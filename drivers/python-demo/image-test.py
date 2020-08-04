@@ -119,7 +119,7 @@ def bitblt(x, y, image_path,  operation, dev1_on):
 
 ########################### main() #######################################################
 def main():
-	image_path = "./winDesktop.jpg"
+	image_path = "./image.jpg"
 	bitblt(x=0, y=0, image_path=image_path, operation=0, dev1_on=True)
 
 if __name__ == '__main__':
