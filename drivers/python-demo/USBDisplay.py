@@ -42,6 +42,8 @@ import random
 
 from PIL import Image
 
+import RPi.GPIO as GPIO
+
 #------Please choose one of them according to the WioTerminal Demo--------#
 # NullFunctional_Demo_for_WioTerminal
 # displayEndpointAddr = 0x04
@@ -571,54 +573,177 @@ def main():
 	# userDemo()
 
 ##-----------------------------AircraftBattleGame Demo test---------------------------------------------------------
+	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+	# plane_path = "./img_50_70.jpg"
+	# bullet_path = "./img_10_10.png"
+	# enemy_path = "./img_40_50.jpg"
+	# gameOver_path = "./img_100_240.jpg"
+	
+	# # plane_y = 85
+	# # bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # # time.sleep(1)
+
+	# # plane_y = plane_y - 80
+	# # bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # # time.sleep(1)
+
+	# # plane_y = plane_y + 160
+	# # bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
+	# # # time.sleep(1)
+
+	# # time.sleep(1)
+	# # player = Player(plane_path, 0, 85)
+
+	# # bullet1 = player.shoot(bullet_path)
+	# # bullet1.move()
+	# # player.moveLeft()
+	# # bullet2 = player.shoot(bullet_path)
+	# # bullet1.move()
+	# # bullet2.move()
+	# # player.moveLeft()
+	# # bullet1.move()
+	# # bullet2.move()
+	# # player.moveRight()
+	# # bullet1.move()
+	# # bullet2.move()
+	# # player.moveRight()
+	# # bullet1.move()
+	# # bullet2.move()
+	# # player.moveLeft()
+	# # bullet1.move()
+
+	# enemy = Enemy(enemy_path, 180, 15)
+	# enemy.move()
+	# enemy.move()
+	# enemy.move()
+	# enemy.move()
+	# enemy.move()
+
+	# bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+	# 		dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+
 	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
 	plane_path = "./img_50_70.jpg"
 	bullet_path = "./img_10_10.png"
 	enemy_path = "./img_40_50.jpg"
 	gameOver_path = "./img_100_240.jpg"
+
+	buttonLeft_pin  = 22
+	buttonRight_pin = 24
+	buttonShoot_pin = 12
 	
-	# plane_y = 85
-	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# # time.sleep(1)
+	# GPIO.setmode(GPIO.BOARD)
+	GPIO.setmode(GPIO.BCM)
 
-	# plane_y = plane_y - 80
-	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# # time.sleep(1)
+	GPIO.setup(buttonLeft_pin,  GPIO.IN)
+	GPIO.setup(buttonRight_pin, GPIO.IN)
+	GPIO.setup(buttonShoot_pin, GPIO.IN)
 
-	# plane_y = plane_y + 160
-	# bitblt(x=0, y=plane_y, image_path=plane_path,  operation=0, dev1_on=True, dev2_on=False, dev3_on=False, dev4_on=False)
-	# # time.sleep(1)
+	player = Player(plane_path, 0, 85)
+	bullets = []
+	bullets_temp = []
+	enemies = []
+	enemies_temp = []
+	# enemy = Enemy(enemy_path, 280, random.choice([15,95,175]))
 
-	# time.sleep(1)
-	# player = Player(plane_path, 0, 85)
+	previousTime = time.time()
+	while(True):
+		currentTime = time.time()
+		timeDifference = (int)(currentTime - previousTime)
 
-	# bullet1 = player.shoot(bullet_path)
-	# bullet1.move()
-	# player.moveLeft()
-	# bullet2 = player.shoot(bullet_path)
-	# bullet1.move()
-	# bullet2.move()
-	# player.moveLeft()
-	# bullet1.move()
-	# bullet2.move()
-	# player.moveRight()
-	# bullet1.move()
-	# bullet2.move()
-	# player.moveRight()
-	# bullet1.move()
-	# bullet2.move()
-	# player.moveLeft()
-	# bullet1.move()
+		buttonLeft_state  = GPIO.input(buttonLeft_pin)
+		buttonRight_state = GPIO.input(buttonRight_pin)
+		buttonShoot_state = GPIO.input(buttonShoot_pin)
 
-	enemy = Enemy(enemy_path, 180, 15)
-	enemy.move()
-	enemy.move()
-	enemy.move()
-	enemy.move()
-	enemy.move()
+		if(buttonLeft_state==GPIO.HIGH):
+			player.moveLeft()
+		if(buttonRight_state==GPIO.HIGH):
+			player.moveRight()
+		if(buttonShoot_state==GPIO.HIGH):
+			bullets.append(player.shoot(bullet_path))
 
-	bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
-			dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		if(timeDifference != 0):
+			if(timeDifference % 5 == 0):
+				previousTime = time.time()
+				enemies.append(Enemy(enemy_path, 280, random.choice([15,95,175])))
+
+		for e in enemies:
+			enemy_y = e.y + e.height/2
+			player_y = player.y + player.height/2
+
+			if(enemy_y==player_y):
+				if(e.x<=player.width):
+					player.is_hit = True
+					break
+			elif(e.x<=0):
+				# bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+				# 		dev1_on=True, dev2_on=True, dev3_on=True)
+				player.is_hit = True
+				break
+
+			for b in bullets:
+				bullet_y = b.y + b.height/2
+				if(enemy_y==bullet_y):
+					if(b.x>=320):
+						b.is_hit = True
+					if(b.x>=e.x):
+						e.is_hit = True
+						b.is_hit = True
+				else:
+					if(b.x>=320):
+						b.is_hit = True
+
+		# for e in enemies:
+		# 	enemy_y = e.y + e.height/2
+		# 	player_y = player.y + player.height/2
+		# 	if(enemy_y==player_y):
+		# 		if(e.x<=player.width):
+		# 			player.is_hit = True
+		# 			break
+		# 		else:
+		# 			continue
+		# 	elif(e.x<=0):
+		# 		# bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+		# 		# 		dev1_on=True, dev2_on=True, dev3_on=True)
+		# 		player.is_hit = True
+		# 		break
+
+		bullets_temp = bullets
+		index1 = 0
+		for b in bullets:
+			if not b.is_hit:
+				b.move()
+			else:
+				bullets_temp.pop(index1)
+				if(index1==0):
+					index1 = 0
+				else:
+					index1 = index1 - 1
+			index1 = index1 + 1
+		bullets = bullets_temp
+
+		enemies_temp = enemies
+		index2 = 0
+		for e in enemies:
+			if not e.is_hit:
+				e.move()
+			else:
+				rect(left=e.x, top=e.y, right=e.x+e.width, bottom=e.y+e.height, color=0xffff, operation=0, \
+					dev1_on=True, dev2_on=False, dev3_on=False)
+				enemies_temp.pop(index2)
+				if(index2==0):
+					index2 = 0
+				else:
+					index2 = index2 - 1
+			index2 = index2 + 1
+		enemies = enemies_temp
+
+		# time.sleep(1)
+
+		if(player.is_hit == True):
+			bitblt(x=110, y=0, image_path=gameOver_path,  operation=0, \
+						dev1_on=True, dev2_on=True, dev3_on=True)
+			break
 
 if __name__ == '__main__':
 	main()
