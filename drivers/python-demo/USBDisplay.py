@@ -241,7 +241,7 @@ operation : The pixel bit operation will be done between the original pixel and 
 dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
 '''
 def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on, dev4_on):
-	# image_path = "./img_20_30.png"
+	# image_path = "./image/img_20_30.png"
 	# image = Image.open(image_path)
 	image = Image.open(image_path)
 	image = image.convert("RGB")
@@ -362,11 +362,11 @@ brief: A demo for user.(Grow on the run)
 def userDemo():
 	print("User Demo.")
 	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	path1 = "./img_20_30.png"
-	path2 = "./img_40_60.jpg"
-	path3 = "./img_70_90.jpg"
-	path4 = "./img_90_120.jpg"
-	path5 = "./img_150_50.jpg"
+	path1 = "./image/img_20_30.png"
+	path2 = "./image/img_40_60.jpg"
+	path3 = "./image/img_70_90.jpg"
+	path4 = "./image/img_90_120.jpg"
+	path5 = "./image/img_150_50.jpg"
 	bitblt(x=0, y=0, image_path=path5,  operation=0, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
 	time.sleep(0.2)
 	bitblt_x = 0
@@ -556,7 +556,7 @@ def main():
 
 	# print("test bitblt function.")
 	# fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
-	# path = "./img_20_30.png"
+	# path = "./image/img_20_30.png"
 	# bitblt_x = 0
 	# bitblt_y = 0
 	# while(True):

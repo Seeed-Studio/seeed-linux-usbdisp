@@ -80,7 +80,7 @@ if dev3 is None:
 brief: Fill the whole screen with color
 
 color: A 16 bit color represent in B5G6R5 format
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on/dev2_on/dev3_on: Select which device to work
 '''
 def fillScreen(color, dev1_on, dev2_on, dev3_on):
 	# fillScreen_color = random.randint(0, 65535)
@@ -126,7 +126,7 @@ right    : The right boundry of the rectangle
 bottom   : The bottom boundry of the rectangle
 color    : A 16 bit color represent in B5G6R5 format
 operation: The pixel bit operation will be done when filling the rectangle
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on/dev2_on/dev3_on: Select which device to work
 '''
 def rect(left, top, right, bottom, color, operation, dev1_on, dev2_on, dev3_on):
 	rect_header = 0x83
@@ -179,7 +179,7 @@ dx    : Destination x coordinate
 dy    : Destination y coordinate
 width : Width of the copying area
 height: Height of the copying area
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on/dev2_on/dev3_on: Select which device to work
 '''
 def copyArea(sx, sy, dx, dy, width, height, dev1_on, dev2_on, dev3_on):
 	# copyArea_printOneTime = 0
@@ -223,10 +223,10 @@ x         : The x coordinate where the image will be painted
 y         : The y coordinate where the image will be painted
 image_path: The path of image
 operation : The pixel bit operation will be done between the original pixel and the pixel from the image
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on/dev2_on/dev3_on: Select which device to work
 '''
 def bitblt(x, y, image_path,  operation, dev1_on, dev2_on, dev3_on):
-	# image_path = "./img_20_30.png"
+	# image_path = "./image/img_20_30.png"
 	# image = Image.open(image_path)
 	image = Image.open(image_path)
 	image = image.convert("RGB")
@@ -388,7 +388,7 @@ class Player():
 		return Bullet(bullet_img, self.x+self.width, (int)(self.y+self.height/2))
 		# b.move()
 		# bitblt(x=self.x, y=self.y, image_path=bullet_img, operation=0, \
-		# 	dev1_on=True, dev2_on=True, dev3_on=True, dev4_on=True)
+		# 	dev1_on=True, dev2_on=True, dev3_on=True)
 
 	def moveUp(self):
 		self.x = 0
@@ -455,10 +455,10 @@ class Enemy():
 ########################### main() #######################################################
 def main():
 	fillScreen(color=0xffff, dev1_on=True, dev2_on=True, dev3_on=True)
-	plane_path = "./img_50_70.jpg"
-	bullet_path = "./img_10_10.png"
-	enemy_path = "./img_40_50.jpg"
-	gameOver_path = "./img_100_240.jpg"
+	plane_path = "./image/img_50_70.jpg"
+	bullet_path = "./image/img_10_10.png"
+	enemy_path = "./image/img_40_50.jpg"
+	gameOver_path = "./image/img_100_240.jpg"
 
 	buttonLeft_pin  = 22
 	buttonRight_pin = 24
