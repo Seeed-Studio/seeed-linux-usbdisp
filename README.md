@@ -43,9 +43,7 @@ $ sudo service lightdm restart
 ```
 
 
-
 ## Contributing
-
 Contributing to this software is warmly welcomed. You can do this basically by<br>
 [forking](https://help.github.com/articles/fork-a-repo), committing modifications and then [pulling requests](https://help.github.com/articles/using-pull-requests) (follow the links above<br>
 for operating guide). Adding change log and your contact into file header is encouraged.<br>
