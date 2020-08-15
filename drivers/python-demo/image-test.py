@@ -36,10 +36,10 @@ x         : The x coordinate where the image will be painted
 y         : The y coordinate where the image will be painted
 image_path: The path of image
 operation : The pixel bit operation will be done between the original pixel and the pixel from the image
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on   : Select dev1 to work
 '''
 def bitblt(x, y, image_path,  operation, dev1_on):
-	# image_path = "./img_20_30.png"
+	# image_path = "./image/img_20_30.png"
 	# image = Image.open(image_path)
 	image = Image.open(image_path)
 	image = image.convert("RGB")
@@ -119,7 +119,7 @@ def bitblt(x, y, image_path,  operation, dev1_on):
 
 ########################### main() #######################################################
 def main():
-	image_path = "./image.jpg"
+	image_path = "./image/image.jpg"
 	bitblt(x=0, y=0, image_path=image_path, operation=0, dev1_on=True)
 
 if __name__ == '__main__':

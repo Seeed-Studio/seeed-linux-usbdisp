@@ -68,7 +68,7 @@ print(dev1.serial_number)
 brief: Fill the whole screen with color
 
 color: A 16 bit color represent in B5G6R5 format
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on: Select dev1 to work
 '''
 def fillScreen(color, dev1_on):
 	# fillScreen_color = random.randint(0, 65535)
@@ -107,7 +107,7 @@ right    : The right boundry of the rectangle
 bottom   : The bottom boundry of the rectangle
 color    : A 16 bit color represent in B5G6R5 format
 operation: The pixel bit operation will be done when filling the rectangle
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on  : Select dev1 to work
 '''
 def rect(left, top, right, bottom, color, operation, dev1_on):
 	rect_header = 0x83
@@ -144,7 +144,7 @@ dx    : Destination x coordinate
 dy    : Destination y coordinate
 width : Width of the copying area
 height: Height of the copying area
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on: Select dev1 to work
 '''
 def copyArea(sx, sy, dx, dy, width, height, dev1_on):
 	# copyArea_printOneTime = 0
@@ -182,7 +182,7 @@ x         : The x coordinate where the image will be painted
 y         : The y coordinate where the image will be painted
 image_path: The path of image
 operation : The pixel bit operation will be done between the original pixel and the pixel from the image
-dev1_on/dev2_on/dev3_on/dev4_on: Select which device to work
+dev1_on   : Select dev1 to work
 '''
 def bitblt(x, y, image_path,  operation, dev1_on):
 
@@ -297,7 +297,7 @@ def main():
 
 	print("test bitblt function.")
 	fillScreen(color=0xffff, dev1_on=True)
-	path = "./img_20_30.png"
+	path = "./image/img_20_30.png"
 	bitblt_x = 0
 	bitblt_y = 0
 	while(True):
