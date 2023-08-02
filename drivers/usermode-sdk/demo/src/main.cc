@@ -63,6 +63,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <getopt.h>
+#include <thread>
 
 #undef USE_C_INTERFACE
 

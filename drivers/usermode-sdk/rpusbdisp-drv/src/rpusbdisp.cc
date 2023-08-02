@@ -13,6 +13,8 @@
 #include <rp/util/buffer.h>
 #include <stdio.h>
 #include <memory.h>
+#include <functional>
+#include <thread>
 
 #define RP_USB_DISPLAY_VID                           0xFCCFu
 #define RP_USB_DISPLAY_PID                           0xA001u
