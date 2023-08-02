@@ -15,6 +15,7 @@
 #include "inc/common.h"
 #include "inc/fbhandlers.h"
 #include "inc/usbhandlers.h"
+#include <linux/version.h>
 
 struct dirty_rect {
     int  left;
@@ -261,8 +262,13 @@ static void _display_defio_handler(struct fb_info *info,
 
     struct rpusbdisp_fb_private * pa = _get_fb_private(info);
     if (!pa->binded_usbdev) return; //simply ignore it 
-    
-    list_for_each_entry(cur, &fbdefio->pagelist, lru) {
+   
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
+    list_for_each_entry(cur, &fbdefio->pagelist, lru)
+#else
+    list_for_each_entry(cur, &fbdefio->pagereflist, lru)
+#endif
+    {
 
         // convert page range to dirty box
         page_start = (cur->index<<PAGE_SHIFT);
