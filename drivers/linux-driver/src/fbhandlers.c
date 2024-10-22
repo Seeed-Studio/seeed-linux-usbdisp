@@ -376,7 +376,7 @@ int _on_create_new_fb(struct fb_info ** out_fb, struct rpusbdisp_dev *dev)
 
 
     fb->fbops       = &_display_fbops;
-    fb->flags       = FBINFO_DEFAULT | FBINFO_VIRTFB;
+    fb->flags       = FBINFO_VIRTFB;
     
     fbmem_size = _var_info.yres * _vfb_fix.line_length; // Correct issue with size allocation (too big)
     fbmem =  rvmalloc(fbmem_size);
